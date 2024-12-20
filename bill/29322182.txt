@@ -1,0 +1,25 @@
+
+		Plamparambil Power Tools
+
+		Pazhavangadi P.O. Ranni
+		Phone No. 8075534104 
+		Email:abrahamj4877@gmail.com
+
+===============================================
+Customer Name: ale
+Ph no: +56973845729
+Bill No. 29322182			Date: 29/10/2024
+===============================================
+Product Name			HSN Code	QTY		Price	Discount
+===============================================
+        
+ mobile		3444	1	Rs.340.0	%.10
+ lenovo		134567	1	Rs.80000.0	%.40
+ range		75680-876	5	Rs.3394500.0	%.57
+===============================================
+Total Sales(A)				Rs.3474840.0
+Total sgst(9%)				Rs.312735.6
+Total cgst(9%)				Rs.312735.6
+Total gst(18%)(B)				Rs.625471.2
+Total Invoice Amount(A+B)			Rs.4100311.2 
+        
