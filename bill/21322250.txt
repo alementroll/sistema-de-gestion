@@ -1,0 +1,23 @@
+
+		Plamparambil Power Tools
+
+		Pazhavangadi P.O. Ranni
+		Phone No. 8075534104 
+		Email:abrahamj4877@gmail.com
+
+===============================================
+Customer Name: ale
+Ph no: burric
+Bill No. 21322250			Date: 21/12/2024
+===============================================
+Product Name			HSN Code	QTY		Price	Discount
+===============================================
+        
+ Tarjeta grafica potente			200000.0	1	Rs.200000.0
+===============================================
+Total Sales(A)				Rs.200000.0
+Total sgst(9%)				Rs.18000.0
+Total cgst(9%)				Rs.18000.0
+Total gst(18%)(B)				Rs.36000.0
+Total Invoice Amount(A+B)			Rs.236000.0 
+        

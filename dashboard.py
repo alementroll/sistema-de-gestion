@@ -20,7 +20,6 @@ class TBS:
         self.root.state("zoomed")
         self.root.bind("<Configure>", self.on_resize)
 
-
         self.screen_width = self.root.winfo_width()
         self.screen_height = self.root.winfo_height()
 
@@ -32,7 +31,6 @@ class TBS:
             "clock_font": 14,
             "footer_font": 12
         }
-
 
         # Header
         self.icon_title = PhotoImage(file="images/tool.png")
@@ -122,6 +120,37 @@ class TBS:
 
         self.update_content()
 
+        # Verificar stock al iniciar
+        self.check_stock()
+
+        # Verificar el stock cada hora (3600000 ms = 1 hora)
+        self.root.after(3600000, self.check_stock)  #REVISA CADA HORA SI HAY ARTICULOS BAJOS, ACA SE PUEDE CAMBIAR
+
+    def check_stock(self):
+        """Consulta los niveles de stock y muestra un pop-up si algún artículo tiene menos de 5 unidades."""
+        con = sqlite3.connect('tbs.db')  # Conectar a la base de datos
+        cur = con.cursor()
+
+        try:
+            # Consultar los artículos con stock menor a 5
+            cur.execute("SELECT itemname, qty FROM stock WHERE qty < 5")
+            data = cur.fetchall()
+
+            if data:
+                # Si hay artículos con stock bajo, mostrar un pop-up con el mensaje
+                low_stock_items = "\n".join([f"{item[0]}: {item[1]} unidades" for item in data])
+                messagebox.showwarning("Stock Bajo", f"¡Atención! Estos artículos tienen menos de 5 unidades:\n{low_stock_items}")
+            else:
+                messagebox.showinfo("Stock Suficiente", "Todos los artículos tienen suficiente stock.")
+
+        except Exception as ex:
+            messagebox.showerror("Error", f"Error al comprobar el stock: {str(ex)}")
+        finally:
+            con.close()
+
+        # Llamar nuevamente a la función después de 1 hora
+        self.root.after(3600000, self.check_stock)
+
     def show_frame(self, frame_name):
         """Muestra únicamente el frame seleccionado."""
         for name, frame in self.frames.items():
@@ -131,7 +160,7 @@ class TBS:
                 frame.lower()  # Oculta los demás
 
     # Métodos para mostrar cada pantalla
-    def on_resize(self, event):# Ajusta el tamaño del contenedor principal o elementos según el tamaño de la ventana
+    def on_resize(self, event):  # Ajusta el tamaño del contenedor principal o elementos según el tamaño de la ventana
         """Evento que redimensiona los widgets."""
         new_width = event.width
 
@@ -176,8 +205,6 @@ class TBS:
         if not hasattr(self, "info_obj"):
             self.info_obj = DataVisualizationClass(self.info_frame)
 
-
-
     def show_stock(self):
         self.show_frame("stock")
         if not hasattr(self, "stock_obj"):
@@ -193,13 +220,10 @@ class TBS:
         if not hasattr(self, "billing_obj"):
             self.billing_obj = billClass(self.billing_frame)
 
-
     def show_orders(self):
         self.orders_frame.lift()
         if not hasattr(self, "orders_obj"):
             self.orders_obj = OrderClass(self.orders_frame)
-
-
 
     def update_content(self):
         con = sqlite3.connect(database=r'tbs.db')
