@@ -103,7 +103,6 @@ class stockClass:
         self.container.bind("<Configure>", self.on_resize)
         self.StockTable.bind("<ButtonRelease-1>", self.get_data)
         self.show()
-        self.fetch_sup()
     
     def on_resize(self, event):
         """Ajusta dinámicamente el tamaño del texto."""
@@ -120,21 +119,6 @@ class stockClass:
 
         for widget in [self.lbl_item_name, self.lbl_price, self.lbl_qty, self.btn_add, self.btn_update, self.btn_delete, self.btn_clear, self.btn_search, self.btn_clear_search]:
             widget.config(font=("goudy old style", font_size_content))
-
-    def fetch_sup(self):
-        con = sqlite3.connect(database=r'tbs.db')
-        cur = con.cursor()
-        try:
-            cur.execute("Select name from supplier")
-            sup = cur.fetchall()
-            self.sup_list.append("Empty")
-            if len(sup) > 0:
-                del self.sup_list[:]
-                self.sup_list.append("Select")
-                for i in sup:
-                    self.sup_list.append(i[0])
-        except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.container)
 
     def show(self):
         con = sqlite3.connect(database=r'tbs.db')

@@ -7,7 +7,7 @@ class OrderClass:
         self.container = container
 
         # Variables
-        self.var_name = StringVar()
+        self.var_client = StringVar()
         self.var_device = StringVar()
         self.var_status = StringVar()
         self.var_service = StringVar()
@@ -18,10 +18,12 @@ class OrderClass:
         self.title.pack(side=TOP, fill=X)
 
         # Campos de entrada
-        self.lbl_name = Label(self.container, text="Nombre Cliente", font=("goudy old style", 15), bg="white")
-        self.lbl_name.place(relx=0.05, rely=0.14)
-        self.txt_name = Entry(self.container, textvariable=self.var_name, font=("goudy old style", 15), bg="white", bd=3)
-        self.txt_name.place(relx=0.25, rely=0.14, relwidth=0.4)
+        self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 15), bg="white")
+        self.lbl_client.place(relx=0.05, rely=0.14)
+        self.cmb_client = ttk.Combobox(self.container, textvariable=self.var_client, state="readonly",
+                                       justify=CENTER, font=("goudy old style", 12))
+        self.cmb_client.place(relx=0.25, rely=0.14, relwidth=0.4)
+        self.load_clients()
 
         self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 15), bg="white")
         self.lbl_device.place(relx=0.05, rely=0.2)
@@ -31,15 +33,15 @@ class OrderClass:
         self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 15), bg="white")
         self.lbl_status.place(relx=0.05, rely=0.26)
         self.cmb_status = ttk.Combobox(self.container, textvariable=self.var_status,
-                                        values=("Terminado", "En proceso", "Por hacer"),
+                                        values=("Por hacer", "En proceso", "Terminado"),
                                         state="readonly", justify=CENTER, font=("goudy old style", 12))
         self.cmb_status.place(relx=0.25, rely=0.26, relwidth=0.4)
         self.cmb_status.current(0)
 
         self.lbl_service = Label(self.container, text="Servicio", font=("goudy old style", 15), bg="white")
         self.lbl_service.place(relx=0.05, rely=0.32)
-        self.cmb_service = ttk.Combobox(self.container, textvariable=self.var_service,
-                                        state="readonly", justify=CENTER, font=("goudy old style", 12))
+        self.cmb_service = ttk.Combobox(self.container, textvariable=self.var_service, state="readonly",
+                                        justify=CENTER, font=("goudy old style", 12))
         self.cmb_service.place(relx=0.25, rely=0.32, relwidth=0.4)
         self.load_services()
 
@@ -80,6 +82,7 @@ class OrderClass:
 
         # Vinculación de redimensionado
         self.container.bind("<Configure>", self.on_resize)
+        self.show()
 
     def on_resize(self, event):
         """Ajusta las fuentes y tamaños de los elementos al tamaño del contenedor."""
@@ -101,14 +104,27 @@ class OrderClass:
         for col in self.OrderTable["columns"]:
             self.OrderTable.column(col, width=int(100 * scale_width))
 
+    def load_clients(self):
+        con = sqlite3.connect(database=r'tbs.db')
+        cur = con.cursor()
+        try:
+            cur.execute("SELECT eid, name FROM client")
+            rows = cur.fetchall()
+            client = [f"{row[0]} - {row[1]}" for row in rows]
+            self.cmb_client["values"] = client
+            if client:
+                self.cmb_client.current(0)
+        except Exception as ex:
+            messagebox.showerror("Error", f"Error al cargar clientes: {str(ex)}")
+
     def load_services(self):
         """Carga los servicios desde la tabla 'services' en la base de datos."""
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            cur.execute("SELECT name FROM services")
+            cur.execute("SELECT id, name FROM services")
             rows = cur.fetchall()
-            services = [row[0] for row in rows]
+            services = [f"{row[0]} - {row[1]}" for row in rows]
             self.cmb_service["values"] = services
             if services:
                 self.cmb_service.current(0)
@@ -116,30 +132,43 @@ class OrderClass:
             messagebox.showerror("Error", f"Error al cargar servicios: {str(ex)}", parent=self.root)
 
     def add(self):
-        """Agrega un nuevo pedido a la base de datos."""
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            if self.var_name.get() == "" or self.var_device.get() == "":
-                messagebox.showerror("Error", "Todos los campos son obligatorios", parent=self.root)
+            client_id = int(self.var_client.get().split(" - ")[0])  # Extraer ID del cliente
+            service_id = int(self.var_service.get().split(" - ")[0])  # Extraer ID del servicio
+            device = self.var_device.get()
+            status = self.var_status.get()
+
+            if not device:
+                messagebox.showerror("Error", "El campo Aparato es obligatorio")
                 return
 
-            cur.execute("INSERT INTO orders (name, device, status, service) VALUES (?, ?, ?, ?)", (
-                self.var_name.get(),
-                self.var_device.get(),
-                self.var_status.get(),
-                self.var_service.get(),
-            ))
+            # Consultar el precio del servicio
+            cur.execute("SELECT price FROM services WHERE id = ?", (service_id,))
+            service_price = cur.fetchone()
+            if not service_price:
+                messagebox.showerror("Error", "Servicio no encontrado")
+                return
+
+            total_price = service_price[0]  # Usar el precio del servicio como total (puedes calcular más si necesitas)
+
+            # Insertar pedido
+            cur.execute("""
+                INSERT INTO orders (client_id, device, status, service_id, order_date, total_price)
+                VALUES (?, ?, ?, ?, date('now'), ?)
+            """, (client_id, device, status, service_id, total_price))
             con.commit()
-            messagebox.showinfo("Éxito", "Pedido agregado correctamente", parent=self.root)
-            self.clear()
+            messagebox.showinfo("Éxito", "Pedido agregado correctamente")
             self.show()
         except Exception as ex:
-            messagebox.showerror("Error", f"Error al agregar pedido: {str(ex)}", parent=self.root)
+            messagebox.showerror("Error", f"Error al agregar pedido: {str(ex)}")
+        finally:
+            con.close()
 
     def clear(self):
         """Limpia los campos de entrada."""
-        self.var_name.set("")
+        self.var_client.set("")
         self.var_device.set("")
         self.var_status.set("Terminado")
         self.var_service.set("")
@@ -147,17 +176,28 @@ class OrderClass:
             self.cmb_service.current(0)
 
     def show(self):
-        """Muestra todos los pedidos en la tabla."""
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            cur.execute("SELECT * FROM orders")
+            # Consulta SQL para obtener los datos con nombres en lugar de IDs
+            cur.execute("""
+                SELECT o.id, c.name AS client_name, o.device, o.status, s.name AS service_name
+                FROM orders o
+                JOIN client c ON o.client_id = c.eid
+                JOIN services s ON o.service_id = s.id
+            """)
             rows = cur.fetchall()
+
+            # Limpia la tabla antes de llenarla nuevamente
             self.OrderTable.delete(*self.OrderTable.get_children())
+
+            # Rellena la tabla con los datos obtenidos
             for row in rows:
                 self.OrderTable.insert('', END, values=row)
         except Exception as ex:
-            messagebox.showerror("Error", f"Error al cargar pedidos: {str(ex)}", parent=self.root)
+            messagebox.showerror("Error", f"Error al mostrar datos: {str(ex)}")
+        finally:
+            con.close()
 
 if __name__ == "__main__":
     root = Tk()

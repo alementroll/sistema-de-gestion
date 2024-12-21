@@ -8,14 +8,15 @@ def create_db():
 
     # Tabla clientes
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS clients(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE IF NOT EXISTS client(
+            eid INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             email TEXT,
             contact TEXT,
             pass TEXT,
-            utype TEXT,
-        )""")
+            utype TEXT
+        )
+    """)
     con.commit()
 
     # Tabla servicios
@@ -48,13 +49,13 @@ def create_db():
         CREATE TABLE IF NOT EXISTS orders(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             client_id INTEGER,
+            device TEXT,
+            status TEXT,
             service_id INTEGER,
-            stock_id INTEGER,
             order_date TEXT,
             total_price REAL,
-            FOREIGN KEY(client_id) REFERENCES clients(id),
-            FOREIGN KEY(service_id) REFERENCES services(id),
-            FOREIGN KEY(stock_id) REFERENCES stock(pid)
+            FOREIGN KEY(client_id) REFERENCES client(id),
+            FOREIGN KEY(service_id) REFERENCES services(id)
         )
     """)
     con.commit()

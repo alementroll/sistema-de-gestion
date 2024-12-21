@@ -175,7 +175,7 @@ class ClientClass:
                 self.var_utype.get(),
             ))
             con.commit()
-            messagebox.showinfo("Error", "No puede agregar texto en el telefono", parent=self.container)
+            messagebox.showinfo("Exito", "Los datos fueron guardados con exito", parent=self.container)
             self.show()
             self.clear()
         except Exception as ex:
