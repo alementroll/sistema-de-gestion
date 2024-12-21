@@ -97,7 +97,7 @@ class OrderClass:
         self.title.config(font=("goudy old style", font_size + 6, "bold"))
 
         # Ajuste de tamaño de los elementos
-        for widget in [self.lbl_name, self.lbl_device, self.lbl_status, self.lbl_service, self.btn_add]:
+        for widget in [self.lbl_client, self.lbl_device, self.lbl_status, self.lbl_service, self.btn_add]:
             widget.config(font=("goudy old style", font_size))
 
         # Ajuste de tamaño de la tabla

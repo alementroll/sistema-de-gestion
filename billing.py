@@ -44,7 +44,7 @@ class billClass:
         scrollx=Scrollbar(ProductFrame3,orient=HORIZONTAL)
        
 
-        self.product_Table=ttk.Treeview(ProductFrame3,columns=("pid","itemname","price","qty","discount"),yscrollcommand=scrolly.set,xscrollcommand=scrollx.set)
+        self.product_Table=ttk.Treeview(ProductFrame3,columns=("pid","itemname","price","qty"),yscrollcommand=scrolly.set,xscrollcommand=scrollx.set)
         scrollx.pack(side=BOTTOM,fill=X)
         scrolly.pack(side=RIGHT,fill=Y)
         scrollx.config(command=self.product_Table.xview) #horizontal scrollbar
@@ -54,7 +54,6 @@ class billClass:
         self.product_Table.heading("itemname",text="Nombre")
         self.product_Table.heading("price",text="Precio")
         self.product_Table.heading("qty",text="Cantidad")
-        self.product_Table.heading("discount",text="stock")
 
         
         
@@ -65,7 +64,6 @@ class billClass:
         self.product_Table.column("itemname",width=100)
         self.product_Table.column("price",width=100)
         self.product_Table.column("qty",width=40)
-        self.product_Table.column("discount",width=100)
         self.product_Table.pack(fill=BOTH,expand=1)
         self.product_Table.bind("<ButtonRelease-1>",self.get_data)
         #self.show()
@@ -258,15 +256,13 @@ class billClass:
         con=sqlite3.connect(database=r'tbs.db')
         cur=con.cursor()
         try:
-            # self.product_Table=ttk.Treeview(ProductFrame3,columns=("pid","name","price","qty"),yscrollcommand=scrolly.set,xscrollcommand=scrollx.set)
-            cur.execute("Select pid,itemname,price,qty,discount from stock")
+            cur.execute("Select pid,itemname,price,qty from stock")
             rows=cur.fetchall()
-            # print(rows)
             self.product_Table.delete(*self.product_Table.get_children())
             for row in rows:
-               self.product_Table.insert('',END,values=row)
+                self.product_Table.insert('',END,values=row)
         except Exception as ex:
-            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)   
+            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)  
 
     def search(self):
         con=sqlite3.connect(database=r'tbs.db')
@@ -275,7 +271,7 @@ class billClass:
             if self.var_search.get()=="":
                 messagebox.showerror("Error","Search Input should be required",parent=self.parent)
             else:
-                cur.execute("select pid,itemname,price,qty,discount from stock where itemname LIKE '%"+self.var_search.get()+"%'")
+                cur.execute("select pid,itemname,price,qty from stock where itemname LIKE '%"+self.var_search.get()+"%'")
                 rows=cur.fetchall()
                 if len(rows)!=0:
                     self.product_Table.delete(*self.product_Table.get_children())
@@ -284,135 +280,98 @@ class billClass:
                 else:
                     messagebox.showerror("Error","No record found!!!",parent=self.parent)
         except Exception as ex:
-            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)   
+            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)  
 
-    def get_data(self,ev):
-        f=self.product_Table.focus()
-        content=(self.product_Table.item(f))
-        row=content['values']
-        self.var_pid.set(row[0])
-        self.var_pname.set(row[1]) 
-        self.var_price.set(row[2])
-        # self.lbl_inStock.config(text=f"In Stock [{str(row[3])}]")
-        self.var_stock.set(row[3])
-        
-        self.var_qty.set('1')
-        self.var_discount.set(row[4])
-
-    
-    def get_data_cart(self,ev):
-        f=self.cartTable.focus()
-        content=(self.cartTable.item(f))
-        row=content['values']
-        self.var_pid.set(row[0])
-        self.var_pname.set(row[1]) 
-        self.var_price.set(row[2])
-        self.var_qty.set(row[3])
-        self.lbl_inStock.config(text=f"In Stock [{str(row[3])}]")
-        self.var_stock.set(row[3])
-        self.var_discount.set(row[4])
-        
-        
-
-    def add_update_cart(self):
-        if self.var_pid.get()=='':
-            messagebox.showerror('Error',"Please select product from the list",parent=self.parent) 
-        elif self.var_qty.get()=='':
-            messagebox.showerror('Error',"Quantity is Required",parent=self.parent)
-
-        elif int(self.var_qty.get())>int(self.var_stock.get()):
-            messagebox.showerror('Error',"Invalid Quantity",parent=self.parent)
+    def get_data(self, ev):
+        f = self.product_Table.focus()
+        content = (self.product_Table.item(f))
+        row = content['values']
+        if row:
+            self.var_pid.set(row[0])
+            self.var_pname.set(row[1])
+            self.var_price.set(row[2])
+            self.var_stock.set(row[3])
+            self.var_qty.set('1')
         else:
-            # price_cal=int(self.var_qty.get())*float(self.var_price.get())
-            # price_cal=float(price_cal)
-
-            price_cal=self.var_price.get()
-            cart_data=[self.var_pid.get(),self.var_pname.get(),price_cal,self.var_qty.get(),self.var_discount.get(),self.var_stock.get()]
-            
-            
-
-            #update cart
-
-            present='no'
-            index_=0
-            for row in self.cart_list:
-                if self.var_pid.get()==row[0]:
-                    present='yes'
-                    break
-                index_+=1
-            # print(present,index_)
+            messagebox.showerror("Error", "No se pudo obtener los datos del producto", parent=self.parent)
+    
+    def get_data_cart(self, ev):
+        f = self.cartTable.focus()
+        content = (self.cartTable.item(f))
+        row = content['values']
+        if row:
+            self.var_pid.set(row[0])
+            self.var_pname.set(row[1])
+            self.var_price.set(row[2])
+            self.var_qty.set(row[3])
+            self.var_stock.set(row[3])
+        else:
+            messagebox.showerror("Error", "No se pudo obtener los datos del carrito", parent=self.parent)
         
-            if present=='yes':
-                op=messagebox.askyesno('Confirm',"Product already present\nDo you want to Update|Remove from the cart list",parent=self.parent)
-                if op==True: 
-                    if self.var_qty.get()=="0":
+    
+    def add_update_cart(self):
+        if self.var_pid.get() == '':
+            messagebox.showerror('Error', "Please select product from the list", parent=self.parent)
+        elif self.var_qty.get() == '':
+            messagebox.showerror('Error', "Quantity is Required", parent=self.parent)
+        elif int(self.var_qty.get()) > int(self.var_stock.get()):
+            messagebox.showerror('Error', "Invalid Quantity", parent=self.parent)
+        else:
+            price_cal = self.var_price.get()
+            cart_data = [self.var_pid.get(), self.var_pname.get(), price_cal, self.var_qty.get()]
+
+            present = 'no'
+            index_ = 0
+            for row in self.cart_list:
+                if self.var_pid.get() == row[0]:
+                    present = 'yes'
+                    break
+                index_ += 1
+            if present == 'yes':
+                op = messagebox.askyesno('Confirm', "Product already present\nDo you want to Update|Remove from the cart list", parent=self.parent)
+                if op == True:
+                    if self.var_qty.get() == "0":
                         self.cart_list.pop(index_)
                     else:
-                        # self.cart_list[index_][2]=price_cal
-                        # self.cart_list[index_][3]=self.var_qty.get()
-                        self.cart_list[index_][4]=self.var_qty.get()
-                        
+                        self.cart_list[index_][3] = self.var_qty.get()
             else:
                 self.cart_list.append(cart_data)
             self.show_cart()
             self.bill_updates()
+            self.show()  # Actualiza la tabla de productos
 
 
     def bill_updates(self):
-        self.total_sales=0
-        # num=[]          pid,itemname,hsncode,price,qty,discount
-        self.actualprice=0
-        self.total_sales=0
-        self.discount=0
-        self.total_invoice_amount=0
-        self.total_sgst=0
-        self.total_cgst=0
-        self.total_gst=0
-        if self.discount > 0:
-            for row in self.cart_list:
-                self.actual_price=float(row[3])*float(row[4])
-               
-                # print(self.actualprice)
-                self.discount=(self.actualprice*int(row[5]))/100
-                self.reducedpay=self.actualprice-self.discount
-                self.total_sales=self.total_sales+float(self.reducedpay)
-                self.total_gst=(self.total_sales*int(18))/100
-                self.total_sgst=self.total_gst/2
-                self.total_cgst=self.total_gst/2
-                self.total_invoice_amount=self.total_sales+self.total_gst
+        self.total_sales = 0
+        self.actualprice = 0
+        self.total_sales = 0
+        self.total_invoice_amount = 0
+        self.total_sgst = 0
+        self.total_cgst = 0
+        self.total_gst = 0
 
-        
-                # self.total_sales=(self.total_sales-(self.total_sales*int(row[5]))/100)
-                # num.append(self.total_sales)
-                # print(num)
-                # for i in num:
-                #     self.total_sales=str(sum(num))
-        
+        for row in self.cart_list:
+            if row[2] is not None and row[3] is not None:
+                try:
+                    self.actualprice += float(row[2]) * int(row[3])
+                except ValueError:
+                    messagebox.showerror("Error", "Error al convertir valores a float", parent=self.parent)
+                    return
+            try:
+                self.total_sales += float(row[2]) * int(row[3])
+            except ValueError:
+                messagebox.showerror("Error", "Error al convertir valores a float", parent=self.parent)
+                return
 
-            print(str(self.total_sales))
-            print(str(self.total_invoice_amount))
+        self.total_sgst = self.total_sales * 0.09
+        self.total_cgst = self.total_sales * 0.09
+        self.total_gst = self.total_sgst + self.total_cgst
+        self.total_invoice_amount = self.total_sales + self.total_gst
 
-            #total sales(A): 
-            #total sgst 9%
-            #total cgst 9%
-            #total gst(B) 18%()
-            #total invoice amount(A+B)
-        
-        # self.total_sales.config(text=f'Bill Amnt\n [{str(self.total_sales)}]')
-        # # self.lbl_netpay.config(text=f'Net Pay\n[{str(self.net_pay)}]')
-        # self.cartTitle.config(text=f"Cart \t Total Products: [{str(len(self.cart_list))}]")
-        else:
-            for row in self.cart_list:
-                self.actualprice=float(row[3])*float(row[4])
-                self.total_sales=self.total_sales+self.actualprice
-                self.total_gst=(self.total_sales*int(18))/100
-                self.total_sgst=self.total_gst/2
-                self.total_cgst=self.total_gst/2
-                self.total_invoice_amount=self.total_sales+self.total_gst
-            print(str(self.total_sales))
-            print(self.total_invoice_amount)
-           
+        print(str(self.total_sales))
+        print(str(self.total_invoice_amount))
 
+        self.cartTitle.config(text=f"Cart \t Total Products: [{str(len(self.cart_list))}]")
 
 
     def show_cart(self):
@@ -424,10 +383,10 @@ class billClass:
             messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)  
 
     def generate_bill(self):
-        if self.var_cname.get()=='' or self.var_contact.get()=='':
-            messagebox.showerror('Error',"Customer Details are required",parent=self.parent)
-        elif len(self.cart_list)==0:
-            messagebox.showerror('Error',"Please Add product to the cart",parent=self.parent)
+        if self.var_cname.get() == '' or self.var_contact.get() == '':
+            messagebox.showerror('Error', "Customer Details are required", parent=self.parent)
+        elif len(self.cart_list) == 0:
+            messagebox.showerror('Error', "Please Add product to the cart", parent=self.parent)
         else:
             #-----Bill top---#
             self.bill_top()
@@ -437,11 +396,13 @@ class billClass:
             self.bill_bottom()
             #
 
-            fp=open(f'bill/{str(self.invoice)}.txt','w')
-            fp.write(self.txt_bill_area.get('1.0',END))
+            fp = open(f'bill/{str(self.invoice)}.txt', 'w')
+            fp.write(self.txt_bill_area.get('1.0', END))
             fp.close()
-            messagebox.showinfo('Saved',"Bill has been generated/Saved in backend",parent=self.parent)
-            self.chk_print=1
+            messagebox.showinfo('Saved', "Bill has been generated/Saved in backend", parent=self.parent)
+            self.chk_print = 1
+            self.show()  # Actualiza la tabla de productos
+            self.show_cart()  # Actualiza la tabla del carrito
 
 
     
@@ -483,33 +444,21 @@ Total Invoice Amount(A+B)\t\t\tRs.{self.total_invoice_amount}
             for row in self.cart_list:
                 pid=row[0]
                 name=row[1]
-                discount=row[5]
-                # print(pid,name,discount)
-                # for self.var_stock in 
-                # print(self.var_stock.get())
-                # print(int(row[4]))
-             
-                qty=int(row[6])-int(row[4])
-                # print(row[6])
-                # print(row[4])
-                
-                
-                # print(qty)
-            
-
-                price=float(row[3])*int(row[4])
+                qty=int(row[3])
+                try:
+                    price=float(row[2])*qty
+                except ValueError:
+                    messagebox.showerror("Error", "Error al convertir valores a float", parent=self.parent)
+                    return
                 price=str(price)
-                self.txt_bill_area.insert(END,"\n "+name+"\t\t"+row[2]+"\t"+row[4]+"\tRs."+price+"\t%."+discount)
+                self.txt_bill_area.insert(END,"\n "+name+"\t\t\t"+row[2]+"\t"+str(qty)+"\tRs."+price)
                 #update qty in stock
-                cur.execute('Update stock set qty=? where pid=?',(
-                qty,
-                pid
-                ))
+                cur.execute('UPDATE stock SET qty = qty - ? WHERE pid = ?', (qty, pid))
                 con.commit()
             con.close()
             self.show()
         except Exception as ex:
-            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent)  
+            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent) 
 
 
 
@@ -526,13 +475,13 @@ Total Invoice Amount(A+B)\t\t\tRs.{self.total_invoice_amount}
         del self.cart_list[:]
         self.var_cname.set('')
         self.var_contact.set('')
-        self.txt_bill_area.delete('1.0',END)
+        self.txt_bill_area.delete('1.0', END)
         self.cartTitle.config(text=f"Cart \t Total Products: [0]")
         self.var_search.set('')
         self.clear_cart()
-        self.show()
-        self.show_cart()
-        self.chk_print=0
+        self.show()  # Actualiza la tabla de productos
+        self.show_cart()  # Actualiza la tabla del carrito
+        self.chk_print = 0
 
     def print_bill(self):
         if self.chk_print==1:

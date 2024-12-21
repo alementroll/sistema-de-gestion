@@ -5,7 +5,6 @@ def create_db():
     con = sqlite3.connect(database=r'tbs.db')
     cur = con.cursor()
 
-
     # Tabla clientes
     cur.execute("""
         CREATE TABLE IF NOT EXISTS client(
@@ -34,12 +33,9 @@ def create_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS stock(
             pid INTEGER PRIMARY KEY AUTOINCREMENT,
-            Supplier TEXT,
             itemname TEXT,
-            hsncode TEXT,
             price REAL,
-            qty INTEGER,
-            discount REAL
+            qty INTEGER
         )
     """)
     con.commit()
