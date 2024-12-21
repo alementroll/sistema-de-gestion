@@ -6,6 +6,7 @@ from stock import stockClass
 from sales import SalesClass
 from billing import billClass
 from orders import OrderClass
+from Info import DataVisualizationClass
 import sqlite3
 from tkinter import messagebox
 import os
@@ -14,7 +15,7 @@ import time
 class TBS:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1320x700")  # Resolución inicial
+        self.root.geometry("1920x1080")  # Resolución inicial
         self.fullscreen = False  # Estado inicial de pantalla completa
         self.root.state("zoomed")
         self.root.bind("<Configure>", self.on_resize)
@@ -76,7 +77,8 @@ class TBS:
             ("Productos", self.show_stock),
             ("Ventas", self.show_sales),
             ("Boleta", self.show_billing),
-            ("Pedidos", self.show_orders)  #Cambiar por el frame de pedidos
+            ("Pedidos", self.show_orders),
+            ("Datos", self.show_info)
         ]
 
         self.menu_btns = []
@@ -99,6 +101,7 @@ class TBS:
         self.sales_frame = Frame(self.container, bg="white")
         self.billing_frame = Frame(self.container, bg="white")
         self.orders_frame = Frame(self.container, bg="white")
+        self.info_frame = Frame(self.container, bg="white")
 
         self.frames = {
             "clients": self.clients_frame,
@@ -106,7 +109,8 @@ class TBS:
             "stock": self.stock_frame,
             "sales": self.sales_frame,
             "billing": self.billing_frame,
-            "orders": self.orders_frame
+            "orders": self.orders_frame,
+            "info": self.info_frame
         }
 
         for frame in self.frames.values():
@@ -166,6 +170,13 @@ class TBS:
         self.show_frame("services")
         if not hasattr(self, "services_obj"):
             self.services_obj = ServiceClass(self.services_frame)
+
+    def show_info(self):
+        self.show_frame("info")
+        if not hasattr(self, "info_obj"):
+            self.info_obj = DataVisualizationClass(self.info_frame)
+
+
 
     def show_stock(self):
         self.show_frame("stock")
