@@ -64,7 +64,7 @@ class TBS:
         self.lbl_menu.pack(side=TOP, fill=X)
 
         # Footer
-        self.footer = Label(self.root, text="Desarrollado por Calico´s | Sistema de gestión 2024",
+        self.footer = Label(self.root, text="Desarrollado por Calico´s | Sistema de gestión 2024©",
                             font=("ARIEL", self.widget_sizes["footer_font"]), bg="#13278f", fg="white", anchor="center")
         self.footer.place(relx=0, rely=0.95, relwidth=1, relheight=0.05)
 

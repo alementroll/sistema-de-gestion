@@ -311,11 +311,11 @@ class billClass:
     
     def add_update_cart(self):
         if self.var_pid.get() == '':
-            messagebox.showerror('Error', "Please select product from the list", parent=self.parent)
+            messagebox.showerror('Error', "Selecciona un producto de la lista", parent=self.parent)
         elif self.var_qty.get() == '':
-            messagebox.showerror('Error', "Quantity is Required", parent=self.parent)
+            messagebox.showerror('Error', "Cantidad necesario", parent=self.parent)
         elif int(self.var_qty.get()) > int(self.var_stock.get()):
-            messagebox.showerror('Error', "Invalid Quantity", parent=self.parent)
+            messagebox.showerror('Error', "Cantidad Invalida", parent=self.parent)
         else:
             price_cal = self.var_price.get()
             cart_data = [self.var_pid.get(), self.var_pname.get(), price_cal, self.var_qty.get()]
@@ -328,7 +328,7 @@ class billClass:
                     break
                 index_ += 1
             if present == 'yes':
-                op = messagebox.askyesno('Confirm', "Product already present\nDo you want to Update|Remove from the cart list", parent=self.parent)
+                op = messagebox.askyesno('Confirmado', "Producto ya presente\nQuieres modificar/eliminar el producto de la lista?", parent=self.parent)
                 if op == True:
                     if self.var_qty.get() == "0":
                         self.cart_list.pop(index_)
