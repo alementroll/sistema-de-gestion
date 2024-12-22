@@ -13,7 +13,7 @@ class Login_System:
         self.root.state('zoomed')
         self.root.title(
             150 * blank_space
-            + "Plamparambil Power Tools Billing and Management System |  Developed by Shibino"
+            + "Inicia sesion"
         )
         self.root.config(bg="#fafafa")
 
