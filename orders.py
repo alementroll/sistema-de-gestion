@@ -74,12 +74,6 @@ class OrderClass:
         self.lst_services.place(relx=0.25, rely=0.48, relwidth=0.4, relheight=0.1)
         self.load_services()
 
-        self.lbl_products = Label(self.container, text="Productos", font=("goudy old style", 15), bg="white")
-        self.lbl_products.place(relx=0.05, rely=0.6)
-        self.lst_products = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 12), bg="white", bd=3)
-        self.lst_products.place(relx=0.25, rely=0.6, relwidth=0.4, relheight=0.1)
-        self.load_products()
-
         # Botón Agregar
         self.btn_add = Button(self.container, text="Agregar", command=self.add, font=("goudy old style", 15, "bold"),
                                 bg="#13278f", fg="white", bd=3, cursor="hand2")
@@ -140,7 +134,7 @@ class OrderClass:
                        self.lbl_new_client_name, self.txt_new_client_name, self.lbl_new_client_email, self.txt_new_client_email,
                        self.lbl_new_client_contact, self.txt_new_client_contact, self.lbl_device, self.txt_device,
                        self.lbl_status, self.cmb_status, self.lbl_details, self.txt_details, self.lbl_services, self.lst_services,
-                       self.lbl_products, self.lst_products, self.btn_add, self.btn_show_list]:
+                       self.btn_add, self.btn_show_list]:
             widget.config(font=("goudy old style", font_size))
 
     def load_clients(self):
@@ -167,18 +161,6 @@ class OrderClass:
                 self.lst_services.insert(END, f"{row[0]} - {row[1]}")
         except Exception as ex:
             messagebox.showerror("Error", f"Error al cargar servicios: {str(ex)}")
-
-    def load_products(self):
-        """Carga los productos desde la tabla 'stock' en la base de datos."""
-        con = sqlite3.connect(database=r'tbs.db')
-        cur = con.cursor()
-        try:
-            cur.execute("SELECT pid, itemname FROM stock")
-            rows = cur.fetchall()
-            for row in rows:
-                self.lst_products.insert(END, f"{row[0]} - {row[1]}")
-        except Exception as ex:
-            messagebox.showerror("Error", f"Error al cargar productos: {str(ex)}")
 
     def add(self):
         con = sqlite3.connect(database=r'tbs.db')
@@ -230,12 +212,6 @@ class OrderClass:
             for i in selected_services:
                 service_id = int(self.lst_services.get(i).split(" - ")[0])
                 cur.execute("INSERT INTO order_services (order_id, service_id) VALUES (?, ?)", (order_id, service_id))
-
-            # Insertar productos del pedido
-            selected_products = self.lst_products.curselection()
-            for i in selected_products:
-                product_id = int(self.lst_products.get(i).split(" - ")[0])
-                cur.execute("INSERT INTO order_products (order_id, product_id) VALUES (?, ?)", (order_id, product_id))
 
             con.commit()
             messagebox.showinfo("Éxito", "Pedido agregado correctamente")

@@ -23,10 +23,12 @@ class OrderListClass:
         try:
             # Consulta SQL para obtener los datos con nombres en lugar de IDs
             cur.execute("""
-                SELECT o.id, c.name AS client_name, o.device, o.status, s.name AS service_name
+                SELECT o.id, c.name AS client_name, o.device, o.status, o.details, GROUP_CONCAT(s.name, ', ') AS services
                 FROM orders o
                 JOIN client c ON o.client_id = c.eid
-                JOIN services s ON o.service_id = s.id
+                LEFT JOIN order_services os ON o.id = os.order_id
+                LEFT JOIN services s ON os.service_id = s.id
+                GROUP BY o.id, c.name, o.device, o.status, o.details
             """)
             rows = cur.fetchall()
 
@@ -43,7 +45,7 @@ class OrderListClass:
             con.close()
 
     def create_order_frame(self, order_data):
-        order_id, client_name, device, status, service_name = order_data
+        order_id, client_name, device, status, details, services = order_data
 
         frame = Frame(self.order_frame, bd=2, relief=RIDGE, bg="white")
         frame.pack(fill=X, pady=5, padx=10)
@@ -53,6 +55,15 @@ class OrderListClass:
 
         lbl_device = Label(frame, text=device, font=("goudy old style", 12), bg="white", anchor="w")
         lbl_device.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+
+        lbl_status = Label(frame, text=status, font=("goudy old style", 12), bg="white", anchor="w")
+        lbl_status.grid(row=2, column=0, padx=10, pady=5, sticky="w")
+
+        lbl_details = Label(frame, text=details, font=("goudy old style", 12), bg="white", anchor="w")
+        lbl_details.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+        lbl_services = Label(frame, text=f"Servicios: {services}", font=("goudy old style", 12), bg="white", anchor="w")
+        lbl_services.grid(row=4, column=0, padx=10, pady=5, sticky="w")
 
         btn_edit = Button(frame, text="Editar", command=lambda: self.update(order_id), font=("goudy old style", 12, "bold"),
                           bg="#13278f", fg="white", cursor="hand2")
@@ -67,11 +78,13 @@ class OrderListClass:
         cur = con.cursor()
         try:
             cur.execute("""
-                SELECT o.id, c.name AS client_name, o.device, o.status, s.name AS service_name
+                SELECT o.id, c.name AS client_name, o.device, o.status, o.details, GROUP_CONCAT(s.name, ', ') AS services
                 FROM orders o
                 JOIN client c ON o.client_id = c.eid
-                JOIN services s ON o.service_id = s.id
+                LEFT JOIN order_services os ON o.id = os.order_id
+                LEFT JOIN services s ON os.service_id = s.id
                 WHERE o.id = ?
+                GROUP BY o.id, c.name, o.device, o.status, o.details
             """, (order_id,))
             data = cur.fetchone()
             if not data:
@@ -87,7 +100,8 @@ class OrderListClass:
             self.var_update_client = StringVar(value=data[1])
             self.var_update_device = StringVar(value=data[2])
             self.var_update_status = StringVar(value=data[3])
-            self.var_update_service = StringVar(value=data[4])
+            self.var_update_details = StringVar(value=data[4])
+            self.var_update_services = StringVar(value=data[5])
 
             # Campos de entrada en la ventana de actualización
             Label(self.update_window, text="Cliente", font=("goudy old style", 15)).place(relx=0.1, rely=0.1)
@@ -100,11 +114,14 @@ class OrderListClass:
             ttk.Combobox(self.update_window, textvariable=self.var_update_status, values=("Por hacer", "En proceso", "Terminado"),
                          state="readonly", font=("goudy old style", 15)).place(relx=0.4, rely=0.3, relwidth=0.5)
 
-            Label(self.update_window, text="Servicio", font=("goudy old style", 15)).place(relx=0.1, rely=0.4)
-            Entry(self.update_window, textvariable=self.var_update_service, font=("goudy old style", 15), state="readonly").place(relx=0.4, rely=0.4, relwidth=0.5)
+            Label(self.update_window, text="Detalles", font=("goudy old style", 15)).place(relx=0.1, rely=0.4)
+            Entry(self.update_window, textvariable=self.var_update_details, font=("goudy old style", 15)).place(relx=0.4, rely=0.4, relwidth=0.5)
+
+            Label(self.update_window, text="Servicios", font=("goudy old style", 15)).place(relx=0.1, rely=0.5)
+            Entry(self.update_window, textvariable=self.var_update_services, font=("goudy old style", 15), state="readonly").place(relx=0.4, rely=0.5, relwidth=0.5)
 
             Button(self.update_window, text="Guardar", command=lambda: self.save_update(order_id), font=("goudy old style", 15, "bold"),
-                   bg="#13278f", fg="white", cursor="hand2").place(relx=0.3, rely=0.6, relwidth=0.4, height=35)
+                   bg="#13278f", fg="white", cursor="hand2").place(relx=0.3, rely=0.7, relwidth=0.4, height=35)
         except Exception as ex:
             messagebox.showerror("Error", f"Error al cargar datos del pedido: {str(ex)}")
         finally:
@@ -116,9 +133,9 @@ class OrderListClass:
         try:
             cur.execute("""
                 UPDATE orders
-                SET device = ?, status = ?
+                SET device = ?, status = ?, details = ?
                 WHERE id = ?
-            """, (self.var_update_device.get(), self.var_update_status.get(), order_id))
+            """, (self.var_update_device.get(), self.var_update_status.get(), self.var_update_details.get(), order_id))
             con.commit()
             messagebox.showinfo("Éxito", "Pedido actualizado correctamente")
             self.update_window.destroy()
