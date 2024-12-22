@@ -157,7 +157,6 @@ class TBS:
             con.close()
 
         # Llamar nuevamente a la función después de 1 hora
-        self.root.after(3600000, self.check_stock)
 
     def show_frame(self, frame_name):
         """Muestra únicamente el frame seleccionado."""
