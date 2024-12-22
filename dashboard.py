@@ -83,7 +83,7 @@ class TBS:
             ("Boleta", self.show_billing),
             ("Pedidos", self.show_orders),
             ("Datos", self.show_info),
-            ("ajuste", self.show_setting)
+            ("Ajustes", self.show_setting)
         ]
 
         self.menu_btns = []
