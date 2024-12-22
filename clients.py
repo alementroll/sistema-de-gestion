@@ -149,16 +149,26 @@ class ClientClass:
         for widget in self.container.winfo_children():
             if isinstance(widget, (Label, Button, Entry, ttk.Combobox, LabelFrame)):
                 widget.config(font=self.font_styles.get("label", ("Arial", 12)))
+    def validate_fields(self):
+        # Validar si el campo de nombre está vacío
+        if self.var_name.get().strip() == "":
+            messagebox.showerror("Error", "El campo de nombre no puede estar vacío", parent=self.container)
+            return False
+
+        # Verificar si el rol es "Administrador" y la contraseña está vacía
+        if self.var_utype.get() == "Administrador" and self.var_pass.get().strip() == "":
+            messagebox.showerror("Error", "La contraseña es obligatoria para el rol de Administrador", parent=self.container)
+            return False
+
+        return True
 
     def add(self):
+        if not self.validate_fields():
+            return
+
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-             # Validar si el campo de nombre está vacío
-            if self.var_name.get().strip() == "":
-                messagebox.showerror("Error", "El campo de nombre no puede estar vacío", parent=self.container)
-                return
-
             # Verificar si el nombre ya existe
             cur.execute("SELECT * FROM client WHERE name = ?", (self.var_name.get(),))
             existing_client = cur.fetchone()
@@ -175,11 +185,11 @@ class ClientClass:
                 self.var_utype.get(),
             ))
             con.commit()
-            messagebox.showinfo("Exito", "Los datos fueron guardados con exito", parent=self.container)
+            messagebox.showinfo("Éxito", "Los datos fueron guardados con éxito", parent=self.container)
             self.show()
             self.clear()
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to: {str(ex)}", parent=self.container)
+            messagebox.showerror("Error", f"Error debido a: {str(ex)}", parent=self.container)
 
     def show(self):
         con = sqlite3.connect(database=r'tbs.db')
@@ -208,27 +218,33 @@ class ClientClass:
         self.var_utype.set(row[5])
 
     def update(self):
+        if not self.validate_fields():
+            return
+
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            current_row = self.EmployeeTable.focus()
-            content = self.EmployeeTable.item(current_row)
-            row = content['values']
+            # Verificar si el cliente existe
+            cur.execute("SELECT * FROM client WHERE name = ?", (self.var_name.get(),))
+            existing_client = cur.fetchone()
 
-            cur.execute("UPDATE client SET name=?, email=?, contact=?, pass=?, utype=? WHERE eid=?", (
-                self.var_name.get(),
+            if not existing_client:
+                messagebox.showerror("Error", "El cliente no existe. Por favor, verifique el nombre.", parent=self.container)
+                return
+
+            cur.execute("UPDATE client SET email = ?, contact = ?, pass = ?, utype = ? WHERE name = ?", (
                 self.var_email.get(),
                 self.var_contact.get(),
                 self.var_pass.get(),
                 self.var_utype.get(),
-                row[0]  # Use the ID from the selected row for updating
+                self.var_name.get(),
             ))
             con.commit()
-            messagebox.showinfo("Correcto", "Usuario actualizado correctamente", parent=self.container)
+            messagebox.showinfo("Éxito", "Los datos fueron actualizados con éxito", parent=self.container)
             self.show()
             self.clear()
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to: {str(ex)}", parent=self.container)
+            messagebox.showerror("Error", f"Error debido a: {str(ex)}", parent=self.container)
 
     def delete(self):
         con = sqlite3.connect(database=r'tbs.db')

@@ -89,6 +89,12 @@ class ServiceClass:
         self.servicesTable.pack(fill=BOTH, expand=1)
         self.servicesTable.bind("<ButtonRelease-1>", self.get_data)
 
+        # Ajustar el tamaño de las columnas
+        self.servicesTable.column("id", width=50)
+        self.servicesTable.column("name", width=150)
+        self.servicesTable.column("price", width=100)
+        self.servicesTable.column("estimated_time", width=150)
+
         # Cargar los servicios 
         self.show_services()
 
