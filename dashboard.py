@@ -159,11 +159,6 @@ class TBS:
         finally:
             con.close()
 
-<<<<<<< HEAD
-        # Llamar nuevamente a la función después de 1 hora
-
-=======
->>>>>>> origin/alejandro
     def show_frame(self, frame_name):
         """Muestra únicamente el frame seleccionado."""
         for name, frame in self.frames.items():
