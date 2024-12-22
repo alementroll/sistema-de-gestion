@@ -6,6 +6,7 @@ from stock import stockClass
 from sales import SalesClass
 from billing import billClass
 from orders import OrderClass
+from orders_list import OrderListClass
 from Info import DataVisualizationClass
 from setting import SettingClass
 import sqlite3
@@ -105,6 +106,7 @@ class TBS:
         self.sales_frame = Frame(self.container, bg="white")
         self.billing_frame = Frame(self.container, bg="white")
         self.orders_frame = Frame(self.container, bg="white")
+        self.orders_list_frame = Frame(self.container, bg="white")
         self.info_frame = Frame(self.container, bg="white")
         self.settings_frame = Frame(self.container, bg="white")
 
@@ -115,6 +117,7 @@ class TBS:
             "sales": self.sales_frame,
             "billing": self.billing_frame,
             "orders": self.orders_frame,
+            "orders_list": self.orders_list_frame,
             "info": self.info_frame,
             "settings": self.settings_frame
         }
@@ -194,8 +197,15 @@ class TBS:
     def logout(self):
         self.root.destroy()
         os.system("python login.py")
-
-
+    
+    def reload_clients(self):
+        """Recarga la lista de clientes en las vistas correspondientes."""
+        if hasattr(self, "client_obj"):
+            self.client_obj.show()
+        if hasattr(self, "orders_obj"):
+            self.orders_obj.load_clients()
+        if hasattr(self, "orders_list_obj"):
+            self.orders_list_obj.show()
 
     def show_setting(self):
         self.show_frame("settings")
@@ -236,7 +246,12 @@ class TBS:
     def show_orders(self):
         self.orders_frame.lift()
         if not hasattr(self, "orders_obj"):
-            self.orders_obj = OrderClass(self.orders_frame)
+            self.orders_obj = OrderClass(self.orders_frame, self.show_orders_list,self.reload_clients)
+    
+    def show_orders_list(self):
+        self.show_frame("orders_list")
+        if not hasattr(self, "orders_list_obj"):
+            self.orders_list_obj = OrderListClass(self.orders_list_frame)
 
     def update_content(self):
         con = sqlite3.connect(database=r'tbs.db')

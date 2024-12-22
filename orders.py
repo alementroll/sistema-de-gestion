@@ -3,21 +3,35 @@ from tkinter import ttk, messagebox
 import sqlite3
 
 class OrderClass:
-    def __init__(self, container):
+    def __init__(self, container, show_orders_list_callback, reload_clients_callback):
         self.container = container
+        self.show_orders_list_callback = show_orders_list_callback
+        self.reload_clients_callback = reload_clients_callback
 
         # Variables
+        self.var_client_type = StringVar(value="Cliente Existente")
         self.var_client = StringVar()
         self.var_device = StringVar()
         self.var_status = StringVar()
         self.var_service = StringVar()
+        self.var_new_client_name = StringVar()
+        self.var_new_client_email = StringVar()
+        self.var_new_client_contact = StringVar()
 
         # Título
         self.title = Label(self.container, text="Gestión de Pedidos", font=("goudy old style", 25, "bold"),
                            bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
-        # Campos de entrada
+        # Selección de tipo de cliente
+        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 15), bg="white")
+        self.lbl_client_type.place(relx=0.05, rely=0.1)
+        self.cmb_client_type = ttk.Combobox(self.container, textvariable=self.var_client_type, state="readonly",
+                                            values=["Cliente Existente", "Cliente Nuevo"], justify=CENTER, font=("goudy old style", 12))
+        self.cmb_client_type.place(relx=0.25, rely=0.1, relwidth=0.4)
+        self.cmb_client_type.bind("<<ComboboxSelected>>", self.on_client_type_change)
+
+        # Campos de entrada para Cliente Existente
         self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 15), bg="white")
         self.lbl_client.place(relx=0.05, rely=0.14)
         self.cmb_client = ttk.Combobox(self.container, textvariable=self.var_client, state="readonly",
@@ -25,64 +39,79 @@ class OrderClass:
         self.cmb_client.place(relx=0.25, rely=0.14, relwidth=0.4)
         self.load_clients()
 
+        # Campos de entrada para Cliente Nuevo
+        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 15), bg="white")
+        self.txt_new_client_name = Entry(self.container, textvariable=self.var_new_client_name, font=("goudy old style", 15), bg="white", bd=3)
+
+        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 15), bg="white")
+        self.txt_new_client_email = Entry(self.container, textvariable=self.var_new_client_email, font=("goudy old style", 15), bg="white", bd=3)
+
+        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 15), bg="white")
+        self.txt_new_client_contact = Entry(self.container, textvariable=self.var_new_client_contact, font=("goudy old style", 15), bg="white", bd=3)
+
+        # Campos de entrada comunes
         self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 15), bg="white")
-        self.lbl_device.place(relx=0.05, rely=0.2)
+        self.lbl_device.place(relx=0.05, rely=0.3)
         self.txt_device = Entry(self.container, textvariable=self.var_device, font=("goudy old style", 15), bg="white", bd=3)
-        self.txt_device.place(relx=0.25, rely=0.2, relwidth=0.4)
+        self.txt_device.place(relx=0.25, rely=0.3, relwidth=0.4)
 
         self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 15), bg="white")
-        self.lbl_status.place(relx=0.05, rely=0.26)
+        self.lbl_status.place(relx=0.05, rely=0.36)
         self.cmb_status = ttk.Combobox(self.container, textvariable=self.var_status,
                                         values=("Por hacer", "En proceso", "Terminado"),
                                         state="readonly", justify=CENTER, font=("goudy old style", 12))
-        self.cmb_status.place(relx=0.25, rely=0.26, relwidth=0.4)
+        self.cmb_status.place(relx=0.25, rely=0.36, relwidth=0.4)
         self.cmb_status.current(0)
 
         self.lbl_service = Label(self.container, text="Servicio", font=("goudy old style", 15), bg="white")
-        self.lbl_service.place(relx=0.05, rely=0.32)
+        self.lbl_service.place(relx=0.05, rely=0.42)
         self.cmb_service = ttk.Combobox(self.container, textvariable=self.var_service, state="readonly",
                                         justify=CENTER, font=("goudy old style", 12))
-        self.cmb_service.place(relx=0.25, rely=0.32, relwidth=0.4)
+        self.cmb_service.place(relx=0.25, rely=0.42, relwidth=0.4)
         self.load_services()
 
         # Botón Agregar
         self.btn_add = Button(self.container, text="Agregar", command=self.add, font=("goudy old style", 15, "bold"),
-                              bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_add.place(relx=0.25, rely=0.38, relwidth=0.2, height=35)
+                                bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_add.place(relx=0.25, rely=0.48, relwidth=0.2, height=35)
 
-        # Tabla de Pedidos
-        self.order_frame = Frame(self.container, bd=3, relief=RIDGE)
-        self.order_frame.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.45)
-
-        self.scrolly = Scrollbar(self.order_frame, orient=VERTICAL)
-        self.scrollx = Scrollbar(self.order_frame, orient=HORIZONTAL)
-        self.OrderTable = ttk.Treeview(self.order_frame, columns=("id", "name", "device", "status", "service"),
-                                       yscrollcommand=self.scrolly.set, xscrollcommand=self.scrollx.set)
-
-        self.scrolly.pack(side=RIGHT, fill=Y)
-        self.scrollx.pack(side=BOTTOM, fill=X)
-        self.scrolly.config(command=self.OrderTable.yview)
-        self.scrollx.config(command=self.OrderTable.xview)
-
-        self.OrderTable.heading("id", text="ID")
-        self.OrderTable.heading("name", text="Cliente")
-        self.OrderTable.heading("device", text="Aparato")
-        self.OrderTable.heading("status", text="Estado")
-        self.OrderTable.heading("service", text="Servicio")
-
-        self.OrderTable["show"] = "headings"
-
-        self.OrderTable.column("id", width=50)
-        self.OrderTable.column("name", width=200)
-        self.OrderTable.column("device", width=200)
-        self.OrderTable.column("status", width=150)
-        self.OrderTable.column("service", width=200)
-
-        self.OrderTable.pack(fill=BOTH, expand=1)
+        # Botón para cambiar a la lista de pedidos
+        self.btn_show_list = Button(self.container, text="Ver Lista de Pedidos", command=self.show_orders_list_callback, font=("goudy old style", 15, "bold"),
+                                bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_show_list.place(relx=0.5, rely=0.48, relwidth=0.3, height=35)
 
         # Vinculación de redimensionado
         self.container.bind("<Configure>", self.on_resize)
-        self.show()
+
+        # Inicializar la vista según el tipo de cliente
+        self.on_client_type_change()
+
+    def on_client_type_change(self, event=None):
+        """Muestra u oculta los campos según el tipo de cliente seleccionado."""
+        if self.var_client_type.get() == "Cliente Nuevo":
+            self.lbl_client.place_forget()
+            self.cmb_client.place_forget()
+
+            self.lbl_new_client_name.place(relx=0.05, rely=0.14)
+            self.txt_new_client_name.place(relx=0.25, rely=0.14, relwidth=0.4)
+
+            self.lbl_new_client_email.place(relx=0.05, rely=0.2)
+            self.txt_new_client_email.place(relx=0.25, rely=0.2, relwidth=0.4)
+
+            self.lbl_new_client_contact.place(relx=0.05, rely=0.26)
+            self.txt_new_client_contact.place(relx=0.25, rely=0.26, relwidth=0.4)
+        else:
+            self.lbl_client.place(relx=0.05, rely=0.14)
+            self.cmb_client.place(relx=0.25, rely=0.14, relwidth=0.4)
+
+            self.lbl_new_client_name.place_forget()
+            self.txt_new_client_name.place_forget()
+
+            self.lbl_new_client_email.place_forget()
+            self.txt_new_client_email.place_forget()
+
+            self.lbl_new_client_contact.place_forget()
+            self.txt_new_client_contact.place_forget()
 
     def on_resize(self, event):
         """Ajusta las fuentes y tamaños de los elementos al tamaño del contenedor."""
@@ -97,12 +126,11 @@ class OrderClass:
         self.title.config(font=("goudy old style", font_size + 6, "bold"))
 
         # Ajuste de tamaño de los elementos
-        for widget in [self.lbl_client, self.lbl_device, self.lbl_status, self.lbl_service, self.btn_add]:
+        for widget in [self.lbl_client_type, self.cmb_client_type, self.lbl_client, self.cmb_client,
+                       self.lbl_new_client_name, self.txt_new_client_name, self.lbl_new_client_email, self.txt_new_client_email,
+                       self.lbl_new_client_contact, self.txt_new_client_contact, self.lbl_device, self.txt_device,
+                       self.lbl_status, self.cmb_status, self.lbl_service, self.cmb_service, self.btn_add, self.btn_show_list]:
             widget.config(font=("goudy old style", font_size))
-
-        # Ajuste de tamaño de la tabla
-        for col in self.OrderTable["columns"]:
-            self.OrderTable.column(col, width=int(100 * scale_width))
 
     def load_clients(self):
         con = sqlite3.connect(database=r'tbs.db')
@@ -129,13 +157,34 @@ class OrderClass:
             if services:
                 self.cmb_service.current(0)
         except Exception as ex:
-            messagebox.showerror("Error", f"Error al cargar servicios: {str(ex)}", parent=self.root)
+            messagebox.showerror("Error", f"Error al cargar servicios: {str(ex)}")
 
     def add(self):
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            client_id = int(self.var_client.get().split(" - ")[0])  # Extraer ID del cliente
+            if self.var_client_type.get() == "Cliente Nuevo":
+                # Validar campos de cliente nuevo
+                if not self.var_new_client_name.get() or not self.var_new_client_email.get() or not self.var_new_client_contact.get():
+                    messagebox.showerror("Error", "Todos los campos de cliente nuevo son obligatorios")
+                    return
+
+                # Insertar nuevo cliente
+                cur.execute("""
+                    INSERT INTO client (name, email, contact, pass, utype)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (self.var_new_client_name.get(), self.var_new_client_email.get(), self.var_new_client_contact.get(), "", "Cliente"))
+                con.commit()
+
+                # Obtener el ID del nuevo cliente
+                cur.execute("SELECT eid FROM client WHERE email = ?", (self.var_new_client_email.get(),))
+                client_id = cur.fetchone()[0]
+
+                # Recargar la lista de clientes en otras vistas
+                self.reload_clients_callback()
+            else:
+                client_id = int(self.var_client.get().split(" - ")[0])  # Extraer ID del cliente existente
+
             service_id = int(self.var_service.get().split(" - ")[0])  # Extraer ID del servicio
             device = self.var_device.get()
             status = self.var_status.get()
@@ -160,46 +209,12 @@ class OrderClass:
             """, (client_id, device, status, service_id, total_price))
             con.commit()
             messagebox.showinfo("Éxito", "Pedido agregado correctamente")
-            self.show()
         except Exception as ex:
             messagebox.showerror("Error", f"Error al agregar pedido: {str(ex)}")
         finally:
             con.close()
 
-    def clear(self):
-        """Limpia los campos de entrada."""
-        self.var_client.set("")
-        self.var_device.set("")
-        self.var_status.set("Terminado")
-        self.var_service.set("")
-        if self.cmb_service["values"]:
-            self.cmb_service.current(0)
-
-    def show(self):
-        con = sqlite3.connect(database=r'tbs.db')
-        cur = con.cursor()
-        try:
-            # Consulta SQL para obtener los datos con nombres en lugar de IDs
-            cur.execute("""
-                SELECT o.id, c.name AS client_name, o.device, o.status, s.name AS service_name
-                FROM orders o
-                JOIN client c ON o.client_id = c.eid
-                JOIN services s ON o.service_id = s.id
-            """)
-            rows = cur.fetchall()
-
-            # Limpia la tabla antes de llenarla nuevamente
-            self.OrderTable.delete(*self.OrderTable.get_children())
-
-            # Rellena la tabla con los datos obtenidos
-            for row in rows:
-                self.OrderTable.insert('', END, values=row)
-        except Exception as ex:
-            messagebox.showerror("Error", f"Error al mostrar datos: {str(ex)}")
-        finally:
-            con.close()
-
 if __name__ == "__main__":
     root = Tk()
-    obj = OrderClass(root)
+    obj = OrderClass(root, lambda: print("Callback no definido"), lambda: print("Recargar clientes no definido"))
     root.mainloop()
