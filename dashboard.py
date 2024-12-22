@@ -131,7 +131,7 @@ class TBS:
         # Verificar stock al iniciar
         self.check_stock()
 
-        # Verificar el stock cada hora (3600000 ms = 1 hora)
+        # Verificar el stock cada hora 
         self.root.after(3600000, self.check_stock)  #REVISA CADA HORA SI HAY ARTICULOS BAJOS, ACA SE PUEDE CAMBIAR
 
     def check_stock(self):
@@ -155,9 +155,6 @@ class TBS:
             messagebox.showerror("Error", f"Error al comprobar el stock: {str(ex)}")
         finally:
             con.close()
-
-        # Llamar nuevamente a la función después de 1 hora
-        self.root.after(3600000, self.check_stock)
 
     def show_frame(self, frame_name):
         """Muestra únicamente el frame seleccionado."""
