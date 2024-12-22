@@ -7,14 +7,17 @@ import threading
 import time
 
 class SettingClass(Frame):
+    title = None  # Atributo de clase para el título
+
     def __init__(self, container):
         super().__init__(container, bg="#bde3ff")  # Cambia el color de fondo aquí
         self.container = container
 
-        # Título
-        self.title = Label(self.container, text="Ajustes", 
-                           font=("goudy old style", 25, "bold"), bg="#13278f", fg="white", bd=3)
-        self.title.pack(side=TOP, fill=X)
+        # Verifica si el título ya fue creado
+        if SettingClass.title is None:
+            SettingClass.title = Label(self.container, text="Ajustes", 
+                                        font=("goudy old style", 25, "bold"), bg="#13278f", fg="white", bd=3)
+            SettingClass.title.pack(side=TOP, fill=X)
 
         # Botón para realizar respaldo manual
         self.btn_backup = Button(self.container, text="Hacer Respaldo Manual", command=self.create_backup,

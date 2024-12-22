@@ -1,0 +1,22 @@
+
+            		Solufix
+            
+		Camilo Campos Nuñez Mesina
+		Telefono: +56973840705
+		Email: CamiloCampos41@gmail.com
+            ===============================================
+            Cliente: asdas
+            Contacto: asd
+            N° Boleta: 22307853			Fecha: 22/12/2024
+            ===============================================
+            Producto	Cantidad		Precio
+            ===============================================
+    
+ lapiz			100.0	1	Rs.100.0
+===============================================
+Total Sales(A)				Rs.100.0
+Total sgst(9%)				Rs.9.0
+Total cgst(9%)				Rs.9.0
+Total gst(18%)(B)				Rs.18.0
+Total Invoice Amount(A+B)			Rs.118.0 
+        

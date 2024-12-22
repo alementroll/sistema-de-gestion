@@ -304,66 +304,78 @@ class billClass:
             fp = open(f'bill/{str(self.invoice)}.txt', 'w')
             fp.write(self.txt_bill_area.get('1.0', END))
             fp.close()
-            messagebox.showinfo('Saved', "Bill has been generated/Saved in backend", parent=self.parent)
+            messagebox.showinfo('Correcto', "Voucher generado", parent=self.parent)
             self.chk_print = 1
             self.show()  # Actualiza la tabla de productos
             self.show_cart()  # Actualiza la tabla del carrito
 
 
-    
     def bill_top(self):
-        self.invoice=int(time.strftime("%H%M%S"))+int(time.strftime("%d%m%Y"))
-        bill_top_temp=f'''
-        \t\tPlamparambil Power Tools
-        \n\t\tPazhavangadi P.O. Ranni
-        \t\tPhone No. 8075534104 
-        \t\tEmail:abrahamj4877@gmail.com
+        # Generar número único de factura
+        self.invoice = int(time.strftime("%H%M%S")) + int(time.strftime("%d%m%Y"))
 
-        {str("="*47)}
-        Customer Name: {self.var_cname.get()}
-        Ph no: {self.var_contact.get()}
-        Bill No. {str(self.invoice)}\t\t\tDate: {str(time.strftime("%d/%m/%Y"))}
-        {str("="*47)}
-        Product Name\t\t\tHSN Code\tQTY\t\tPrice\tDiscount
-        {str("="*47)}
-                '''
-        self.txt_bill_area.delete('1.0',END)
-        self.txt_bill_area.insert('1.0',bill_top_temp)
+        # Crear la plantilla de la cabecera
+        company_name = "Solufix"
+        owner_details = "Camilo Campos Nuñez Mesina\nTelefono: +56973840705\nEmail: CamiloCampos41@gmail.com"
+        separator = "=" * 47
+        client_name = self.var_cname.get() if self.var_cname.get() else "Cliente no registrado"
+        contact_info = self.var_contact.get() if self.var_contact.get() else "Sin contacto"
+
+        # Crear la factura
+        bill_top_temp = f'''
+    {company_name:^47}
+    {owner_details:^47}
+    {separator}
+    Cliente: {client_name}
+    Contacto: {contact_info}
+    N° Boleta: {str(self.invoice)}    Fecha: {str(time.strftime("%d/%m/%Y"))}
+    {separator}
+    Producto           Cantidad        Precio
+    {separator}
+    '''
+
+        # Limpia el área de texto y agrega la nueva cabecera
+        self.txt_bill_area.delete('1.0', END)
+        self.txt_bill_area.insert('1.0', bill_top_temp)
 
 
     def bill_bottom(self):
-        bill_bottom_temp=f'''
-{str("="*47)}
-Total Sales(A)\t\t\t\tRs.{self.total_sales}
-Total sgst(9%)\t\t\t\tRs.{self.total_sgst}
-Total cgst(9%)\t\t\t\tRs.{self.total_cgst}
-Total gst(18%)(B)\t\t\t\tRs.{self.total_gst}
-Total Invoice Amount(A+B)\t\t\tRs.{self.total_invoice_amount} 
-        '''
-        self.txt_bill_area.insert(END,bill_bottom_temp)
+        bill_bottom_temp = f'''
+    {str("=" * 47)}
+    Total Sales(A)                 Rs.{self.total_sales:.2f}
+    Total sgst(9%)                 Rs.{self.total_sgst:.2f}
+    Total cgst(9%)                 Rs.{self.total_cgst:.2f}
+    Total gst(18%)(B)              Rs.{self.total_gst:.2f}
+    Total Invoice Amount(A+B)      Rs.{self.total_invoice_amount:.2f}
+    '''
+        self.txt_bill_area.insert(END, bill_bottom_temp)
+
 
     def bill_middle(self):
-        con=sqlite3.connect(database=r'tbs.db')
-        cur=con.cursor()
+        con = sqlite3.connect(database=r'tbs.db')
+        cur = con.cursor()
         try:
             for row in self.cart_list:
-                pid=row[0]
-                name=row[1]
-                qty=int(row[3])
+                pid = row[0]
+                name = row[1]
+                qty = int(row[3])
                 try:
-                    price=float(row[2])*qty
+                    price = float(row[2]) * qty
                 except ValueError:
                     messagebox.showerror("Error", "Error al convertir valores a float", parent=self.parent)
                     return
-                price=str(price)
-                self.txt_bill_area.insert(END,"\n "+name+"\t\t\t"+row[2]+"\t"+str(qty)+"\tRs."+price)
-                #update qty in stock
+                
+                # Alineación para cada producto
+                self.txt_bill_area.insert(END, f"\n{name:<20}\t{qty:<8}\tRs.{price:.2f}")
+
+                # Update qty in stock
                 cur.execute('UPDATE stock SET qty = qty - ? WHERE pid = ?', (qty, pid))
                 con.commit()
             con.close()
             self.show()
         except Exception as ex:
-            messagebox.showerror("Error",f"Error due to : {str(ex)} ",parent=self.parent) 
+            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.parent)
+
 
 
 

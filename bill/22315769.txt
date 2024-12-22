@@ -1,0 +1,21 @@
+
+                            Solufix                    
+                   Camilo Campos Nuñez Mesina          
+             Telefono: +56973840705            
+        Email: CamiloCampos41@gmail.com        
+        ===============================================
+        Cliente: asd
+        Contacto: sad
+        N° Boleta: 22315769		Fecha: 22/12/2024
+        ===============================================
+        Producto           Cantidad        Precio
+        ===============================================
+        
+ Tarjeta grafica baja			100000.0	1	Rs.100000.0
+        ===============================================
+        Total Sales(A)                 Rs.100000.00
+        Total sgst(9%)                 Rs.9000.00
+        Total cgst(9%)                 Rs.9000.00
+        Total gst(18%)(B)              Rs.18000.00
+        Total Invoice Amount(A+B)      Rs.118000.00
+    
