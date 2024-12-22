@@ -13,7 +13,7 @@ class OrderClass:
         self.var_client = StringVar()
         self.var_device = StringVar()
         self.var_status = StringVar()
-        self.var_service = StringVar()
+        self.var_details = StringVar()
         self.var_new_client_name = StringVar()
         self.var_new_client_email = StringVar()
         self.var_new_client_contact = StringVar()
@@ -63,22 +63,32 @@ class OrderClass:
         self.cmb_status.place(relx=0.25, rely=0.36, relwidth=0.4)
         self.cmb_status.current(0)
 
-        self.lbl_service = Label(self.container, text="Servicio", font=("goudy old style", 15), bg="white")
-        self.lbl_service.place(relx=0.05, rely=0.42)
-        self.cmb_service = ttk.Combobox(self.container, textvariable=self.var_service, state="readonly",
-                                        justify=CENTER, font=("goudy old style", 12))
-        self.cmb_service.place(relx=0.25, rely=0.42, relwidth=0.4)
+        self.lbl_details = Label(self.container, text="Detalles", font=("goudy old style", 15), bg="white")
+        self.lbl_details.place(relx=0.05, rely=0.42)
+        self.txt_details = Entry(self.container, textvariable=self.var_details, font=("goudy old style", 15), bg="white", bd=3)
+        self.txt_details.place(relx=0.25, rely=0.42, relwidth=0.4)
+
+        self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 15), bg="white")
+        self.lbl_services.place(relx=0.05, rely=0.48)
+        self.lst_services = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 12), bg="white", bd=3)
+        self.lst_services.place(relx=0.25, rely=0.48, relwidth=0.4, relheight=0.1)
         self.load_services()
+
+        self.lbl_products = Label(self.container, text="Productos", font=("goudy old style", 15), bg="white")
+        self.lbl_products.place(relx=0.05, rely=0.6)
+        self.lst_products = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 12), bg="white", bd=3)
+        self.lst_products.place(relx=0.25, rely=0.6, relwidth=0.4, relheight=0.1)
+        self.load_products()
 
         # Botón Agregar
         self.btn_add = Button(self.container, text="Agregar", command=self.add, font=("goudy old style", 15, "bold"),
                                 bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_add.place(relx=0.25, rely=0.48, relwidth=0.2, height=35)
+        self.btn_add.place(relx=0.25, rely=0.72, relwidth=0.2, height=35)
 
         # Botón para cambiar a la lista de pedidos
         self.btn_show_list = Button(self.container, text="Ver Lista de Pedidos", command=self.show_orders_list_callback, font=("goudy old style", 15, "bold"),
                                 bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_show_list.place(relx=0.5, rely=0.48, relwidth=0.3, height=35)
+        self.btn_show_list.place(relx=0.5, rely=0.72, relwidth=0.3, height=35)
 
         # Vinculación de redimensionado
         self.container.bind("<Configure>", self.on_resize)
@@ -129,7 +139,8 @@ class OrderClass:
         for widget in [self.lbl_client_type, self.cmb_client_type, self.lbl_client, self.cmb_client,
                        self.lbl_new_client_name, self.txt_new_client_name, self.lbl_new_client_email, self.txt_new_client_email,
                        self.lbl_new_client_contact, self.txt_new_client_contact, self.lbl_device, self.txt_device,
-                       self.lbl_status, self.cmb_status, self.lbl_service, self.cmb_service, self.btn_add, self.btn_show_list]:
+                       self.lbl_status, self.cmb_status, self.lbl_details, self.txt_details, self.lbl_services, self.lst_services,
+                       self.lbl_products, self.lst_products, self.btn_add, self.btn_show_list]:
             widget.config(font=("goudy old style", font_size))
 
     def load_clients(self):
@@ -152,12 +163,22 @@ class OrderClass:
         try:
             cur.execute("SELECT id, name FROM services")
             rows = cur.fetchall()
-            services = [f"{row[0]} - {row[1]}" for row in rows]
-            self.cmb_service["values"] = services
-            if services:
-                self.cmb_service.current(0)
+            for row in rows:
+                self.lst_services.insert(END, f"{row[0]} - {row[1]}")
         except Exception as ex:
             messagebox.showerror("Error", f"Error al cargar servicios: {str(ex)}")
+
+    def load_products(self):
+        """Carga los productos desde la tabla 'stock' en la base de datos."""
+        con = sqlite3.connect(database=r'tbs.db')
+        cur = con.cursor()
+        try:
+            cur.execute("SELECT pid, itemname FROM stock")
+            rows = cur.fetchall()
+            for row in rows:
+                self.lst_products.insert(END, f"{row[0]} - {row[1]}")
+        except Exception as ex:
+            messagebox.showerror("Error", f"Error al cargar productos: {str(ex)}")
 
     def add(self):
         con = sqlite3.connect(database=r'tbs.db')
@@ -185,28 +206,37 @@ class OrderClass:
             else:
                 client_id = int(self.var_client.get().split(" - ")[0])  # Extraer ID del cliente existente
 
-            service_id = int(self.var_service.get().split(" - ")[0])  # Extraer ID del servicio
             device = self.var_device.get()
             status = self.var_status.get()
+            details = self.var_details.get()
 
             if not device:
                 messagebox.showerror("Error", "El campo Aparato es obligatorio")
                 return
 
-            # Consultar el precio del servicio
-            cur.execute("SELECT price FROM services WHERE id = ?", (service_id,))
-            service_price = cur.fetchone()
-            if not service_price:
-                messagebox.showerror("Error", "Servicio no encontrado")
-                return
-
-            total_price = service_price[0]  # Usar el precio del servicio como total (puedes calcular más si necesitas)
-
             # Insertar pedido
             cur.execute("""
-                INSERT INTO orders (client_id, device, status, service_id, order_date, total_price)
-                VALUES (?, ?, ?, ?, date('now'), ?)
-            """, (client_id, device, status, service_id, total_price))
+                INSERT INTO orders (client_id, device, status, details, order_date, total_price)
+                VALUES (?, ?, ?, ?, date('now'), 0)
+            """, (client_id, device, status, details))
+            con.commit()
+
+            # Obtener el ID del nuevo pedido
+            cur.execute("SELECT id FROM orders ORDER BY id DESC LIMIT 1")
+            order_id = cur.fetchone()[0]
+
+            # Insertar servicios del pedido
+            selected_services = self.lst_services.curselection()
+            for i in selected_services:
+                service_id = int(self.lst_services.get(i).split(" - ")[0])
+                cur.execute("INSERT INTO order_services (order_id, service_id) VALUES (?, ?)", (order_id, service_id))
+
+            # Insertar productos del pedido
+            selected_products = self.lst_products.curselection()
+            for i in selected_products:
+                product_id = int(self.lst_products.get(i).split(" - ")[0])
+                cur.execute("INSERT INTO order_products (order_id, product_id) VALUES (?, ?)", (order_id, product_id))
+
             con.commit()
             messagebox.showinfo("Éxito", "Pedido agregado correctamente")
         except Exception as ex:
