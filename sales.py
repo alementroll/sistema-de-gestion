@@ -67,7 +67,12 @@ class SalesClass:
         scrolly2.config(command=self.bill_area.yview)
         self.bill_area.pack(fill=BOTH, expand=True)
 
+        # Mostrar las boletas al inicio
         self.show()
+
+        # Añadimos el botón de eliminar debajo del área de las boletas
+        self.btn_delete = Button(self.container, text="Eliminar", command=self.delete_invoice, font=("goudy old style", self.widget_sizes["button_font"], "bold"), bg="red", fg="white", cursor="hand2")
+        self.btn_delete.place(relx=0.02, rely=0.85, relwidth=0.25, relheight=0.05)
 
     def on_resize(self, event):
         # Calcula tamaños proporcionales
@@ -86,6 +91,7 @@ class SalesClass:
         self.btn_search.config(font=("goudy old style", self.widget_sizes["button_font"], "bold"))
         self.sales_list.config(font=("goudy old style", int(width / 90)))
         self.bill_area.config(font=("goudy old style", self.widget_sizes["list_font"]))    
+
     # Métodos de funcionalidad de SalesClass
     def show(self):
         self.bill_list.clear()
@@ -102,6 +108,26 @@ class SalesClass:
         with open(f'bill/{file_name}', 'r') as fp:
             for line in fp:
                 self.bill_area.insert(END, line)
+
+    def delete_invoice(self):
+        selected_invoice = self.sales_list.curselection()
+        
+        if not selected_invoice:
+            messagebox.showerror("Error", "Por favor seleccione una boleta para eliminar", parent=self.container)
+            return
+        
+        file_name = self.sales_list.get(selected_invoice)
+        file_path = f'bill/{file_name}'
+        
+        confirm = messagebox.askyesno("Confirmar eliminación", f"¿Estás seguro de eliminar la boleta {file_name}?", parent=self.container)
+        
+        if confirm:
+            try:
+                os.remove(file_path)  # Eliminar el archivo
+                messagebox.showinfo("Éxito", f"Boleta {file_name} eliminada correctamente", parent=self.container)
+                self.show()  # Actualizar la lista
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo eliminar la boleta: {e}", parent=self.container)
 
     def search(self):
         if not self.var_invoice.get():

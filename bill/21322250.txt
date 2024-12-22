@@ -7,17 +7,17 @@
 
 ===============================================
 Customer Name: ale
-Ph no: 123123
-Bill No. 31325966			Date: 31/10/2024
+Ph no: burric
+Bill No. 21322250			Date: 21/12/2024
 ===============================================
 Product Name			HSN Code	QTY		Price	Discount
 ===============================================
         
- 8668-0006		75680-870	1	Rs.678905.0	%.56
+ Tarjeta grafica potente			200000.0	1	Rs.200000.0
 ===============================================
-Total Sales(A)				Rs.678905.0
-Total sgst(9%)				Rs.61101.45
-Total cgst(9%)				Rs.61101.45
-Total gst(18%)(B)				Rs.122202.9
-Total Invoice Amount(A+B)			Rs.801107.9 
+Total Sales(A)				Rs.200000.0
+Total sgst(9%)				Rs.18000.0
+Total cgst(9%)				Rs.18000.0
+Total gst(18%)(B)				Rs.36000.0
+Total Invoice Amount(A+B)			Rs.236000.0 
         

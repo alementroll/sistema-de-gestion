@@ -6,6 +6,8 @@ from stock import stockClass
 from sales import SalesClass
 from billing import billClass
 from orders import OrderClass
+from Info import DataVisualizationClass
+from setting import SettingClass
 import sqlite3
 from tkinter import messagebox
 import os
@@ -14,11 +16,10 @@ import time
 class TBS:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1320x700")  # Resolución inicial
+        self.root.geometry("1920x1080")  # Resolución inicial
         self.fullscreen = False  # Estado inicial de pantalla completa
         self.root.state("zoomed")
         self.root.bind("<Configure>", self.on_resize)
-
 
         self.screen_width = self.root.winfo_width()
         self.screen_height = self.root.winfo_height()
@@ -31,7 +32,6 @@ class TBS:
             "clock_font": 14,
             "footer_font": 12
         }
-
 
         # Header
         self.icon_title = PhotoImage(file="images/tool.png")
@@ -51,6 +51,10 @@ class TBS:
         self.btn_fullscreen.place(relx=0.65, rely=0.035, relwidth=0.16, relheight=0.08)
         self.btn_fullscreen.config(font=("ARIEL", self.widget_sizes["button_font"], "bold"))
 
+
+
+
+        
         # Reloj
         self.lbl_clock = Label(self.root, text="Bienvenido a Plamparambil Power Tools...!!\t\t Fecha: DD-MM-YYYY\t\t Hora: HH:MM:SS",
                                font=("ARIEL", self.widget_sizes["clock_font"]), bg="#bde3ff", fg="black", borderwidth=3, relief="solid")
@@ -65,7 +69,7 @@ class TBS:
         self.lbl_menu.pack(side=TOP, fill=X)
 
         # Footer
-        self.footer = Label(self.root, text="Desarrollado por Calico´s | Sistema de gestión 2024",
+        self.footer = Label(self.root, text="Desarrollado por Calico´s | Sistema de gestión 2024©",
                             font=("ARIEL", self.widget_sizes["footer_font"]), bg="#13278f", fg="white", anchor="center")
         self.footer.place(relx=0, rely=0.95, relwidth=1, relheight=0.05)
 
@@ -76,7 +80,9 @@ class TBS:
             ("Productos", self.show_stock),
             ("Ventas", self.show_sales),
             ("Boleta", self.show_billing),
-            ("Pedidos", self.show_orders)  #Cambiar por el frame de pedidos
+            ("Pedidos", self.show_orders),
+            ("Datos", self.show_info),
+            ("ajuste", self.show_setting)
         ]
 
         self.menu_btns = []
@@ -99,6 +105,8 @@ class TBS:
         self.sales_frame = Frame(self.container, bg="white")
         self.billing_frame = Frame(self.container, bg="white")
         self.orders_frame = Frame(self.container, bg="white")
+        self.info_frame = Frame(self.container, bg="white")
+        self.settings_frame = Frame(self.container, bg="white")
 
         self.frames = {
             "clients": self.clients_frame,
@@ -106,7 +114,9 @@ class TBS:
             "stock": self.stock_frame,
             "sales": self.sales_frame,
             "billing": self.billing_frame,
-            "orders": self.orders_frame
+            "orders": self.orders_frame,
+            "info": self.info_frame,
+            "settings": self.settings_frame
         }
 
         for frame in self.frames.values():
@@ -118,6 +128,37 @@ class TBS:
 
         self.update_content()
 
+        # Verificar stock al iniciar
+        self.check_stock()
+
+        # Verificar el stock cada hora (3600000 ms = 1 hora)
+        self.root.after(3600000, self.check_stock)  #REVISA CADA HORA SI HAY ARTICULOS BAJOS, ACA SE PUEDE CAMBIAR
+
+    def check_stock(self):
+        """Consulta los niveles de stock y muestra un pop-up si algún artículo tiene menos de 5 unidades."""
+        con = sqlite3.connect('tbs.db')  # Conectar a la base de datos
+        cur = con.cursor()
+
+        try:
+            # Consultar los artículos con stock menor a 5
+            cur.execute("SELECT itemname, qty FROM stock WHERE qty < 5")
+            data = cur.fetchall()
+
+            if data:
+                # Si hay artículos con stock bajo, mostrar un pop-up con el mensaje
+                low_stock_items = "\n".join([f"{item[0]}: {item[1]} unidades" for item in data])
+                messagebox.showwarning("Stock Bajo", f"¡Atención! Estos artículos tienen menos de 5 unidades:\n{low_stock_items}")
+            else:
+                messagebox.showinfo("Stock Suficiente", "Todos los artículos tienen suficiente stock.")
+
+        except Exception as ex:
+            messagebox.showerror("Error", f"Error al comprobar el stock: {str(ex)}")
+        finally:
+            con.close()
+
+        # Llamar nuevamente a la función después de 1 hora
+        self.root.after(3600000, self.check_stock)
+
     def show_frame(self, frame_name):
         """Muestra únicamente el frame seleccionado."""
         for name, frame in self.frames.items():
@@ -127,7 +168,7 @@ class TBS:
                 frame.lower()  # Oculta los demás
 
     # Métodos para mostrar cada pantalla
-    def on_resize(self, event):# Ajusta el tamaño del contenedor principal o elementos según el tamaño de la ventana
+    def on_resize(self, event):  # Ajusta el tamaño del contenedor principal o elementos según el tamaño de la ventana
         """Evento que redimensiona los widgets."""
         new_width = event.width
 
@@ -157,6 +198,14 @@ class TBS:
         self.root.destroy()
         os.system("python login.py")
 
+
+
+    def show_setting(self):
+        self.show_frame("settings")
+        if not hasattr(self, "settings"):
+            self.settings_obj = SettingClass(self.settings_frame)
+
+
     def show_client(self):
         self.show_frame("clients")
         if not hasattr(self, "client_obj"):
@@ -166,6 +215,11 @@ class TBS:
         self.show_frame("services")
         if not hasattr(self, "services_obj"):
             self.services_obj = ServiceClass(self.services_frame)
+
+    def show_info(self):
+        self.show_frame("info")
+        if not hasattr(self, "info_obj"):
+            self.info_obj = DataVisualizationClass(self.info_frame)
 
     def show_stock(self):
         self.show_frame("stock")
@@ -182,13 +236,10 @@ class TBS:
         if not hasattr(self, "billing_obj"):
             self.billing_obj = billClass(self.billing_frame)
 
-
     def show_orders(self):
         self.orders_frame.lift()
         if not hasattr(self, "orders_obj"):
             self.orders_obj = OrderClass(self.orders_frame)
-
-
 
     def update_content(self):
         con = sqlite3.connect(database=r'tbs.db')
