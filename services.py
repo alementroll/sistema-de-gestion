@@ -15,7 +15,7 @@ class ServiceClass:
 
         self.font_sizes = {
             "title_font": 20,
-            "label_font": 14,
+            "label_font": 18,  # Aumentar el tamaño de la fuente de los labels
             "entry_font": 14,
             "button_font": 12,
             "table_font": 12
@@ -29,7 +29,7 @@ class ServiceClass:
         # Buscar servicio
         self.lbl_search = Label(self.container, text="Buscar Servicio por nombre", bg="#bde3ff",
                         font=("goudy old style", self.font_sizes["label_font"]))
-        self.lbl_search.place(relx=0.55, rely=0.12, relwidth=0.25, relheight=0.05)
+        self.lbl_search.place(relx=0.54, rely=0.12, relwidth=0.25, relheight=0.05)
         self.txt_search = Entry(self.container, textvariable=self.var_searchtxt, font=("goudy old style", self.font_sizes["entry_font"]), bg="white", bd=3)
         self.txt_search.place(relx=0.76, rely=0.12, relwidth=0.1, relheight=0.05)
         self.btn_search = Button(self.container, text="Buscar", command=self.search, font=("goudy old style", self.font_sizes["button_font"], "bold"),
@@ -37,20 +37,20 @@ class ServiceClass:
         self.btn_search.place(relx=0.87, rely=0.12, relwidth=0.08, relheight=0.05)
 
         # Formulario
-        self.lbl_name = Label(self.container, text="Nombre", font=self.font_sizes["label_font"], bg="#bde3ff")
+        self.lbl_name = Label(self.container, text="Nombre", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_name.place(relx=0.05, rely=0.2)
-        self.txt_name = Entry(self.container, textvariable=self.var_name, font=self.font_sizes["entry_font"], bg="white")
-        self.txt_name.place(relx=0.15, rely=0.2, relwidth=0.25)
+        self.txt_name = Entry(self.container, textvariable=self.var_name, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
+        self.txt_name.place(relx=0.12, rely=0.2, relwidth=0.25, relheight=0.04)
 
-        self.lbl_price = Label(self.container, text="Precio", font=self.font_sizes["label_font"], bg="#bde3ff")
+        self.lbl_price = Label(self.container, text="Precio", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_price.place(relx=0.05, rely=0.3)
-        self.txt_price = Entry(self.container, textvariable=self.var_price, font=self.font_sizes["entry_font"], bg="white")
-        self.txt_price.place(relx=0.15, rely=0.3, relwidth=0.25)
+        self.txt_price = Entry(self.container, textvariable=self.var_price, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
+        self.txt_price.place(relx=0.12, rely=0.3, relwidth=0.25, relheight=0.04)
 
-        self.lbl_duration = Label(self.container, text="Duración", font=self.font_sizes["label_font"], bg="#bde3ff")
+        self.lbl_duration = Label(self.container, text="Duración", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_duration.place(relx=0.05, rely=0.4)
-        self.txt_duration = Entry(self.container, textvariable=self.var_estimated_time, font=self.font_sizes["entry_font"], bg="white")
-        self.txt_duration.place(relx=0.15, rely=0.4, relwidth=0.25)
+        self.txt_duration = Entry(self.container, textvariable=self.var_estimated_time, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
+        self.txt_duration.place(relx=0.12, rely=0.4, relwidth=0.25, relheight=0.04)
 
         # Botones
         self.btn_save = Button(self.container, text="Guardar", command=self.add, font=("goudy old style", self.font_sizes["button_font"]),
@@ -90,10 +90,10 @@ class ServiceClass:
         self.servicesTable.bind("<ButtonRelease-1>", self.get_data)
 
         # Ajustar el tamaño de las columnas
-        self.servicesTable.column("id", width=50)
-        self.servicesTable.column("name", width=150)
-        self.servicesTable.column("price", width=100)
-        self.servicesTable.column("estimated_time", width=150)
+        self.servicesTable.column("id", width=10)
+        self.servicesTable.column("name", width=175)
+        self.servicesTable.column("price", width=60)
+        self.servicesTable.column("estimated_time", width=120)
 
         # Cargar los servicios 
         self.show_services()
@@ -114,7 +114,7 @@ class ServiceClass:
 
         # Escalar tamaños de fuente proporcionalmente
         self.font_sizes["title_font"] = int(new_width / 50)
-        self.font_sizes["label_font"] = int(new_width / 80)
+        self.font_sizes["label_font"] = int(new_width / 60)
         self.font_sizes["entry_font"] = int(new_width / 90)
         self.font_sizes["button_font"] = int(new_width / 100)
         self.font_sizes["table_font"] = int(new_width / 110)
@@ -153,8 +153,12 @@ class ServiceClass:
         if self.var_name.get() == "" or self.var_price.get() == "" or self.var_estimated_time.get() == "":
             messagebox.showerror("Error", "Todos los campos son obligatorios", parent=self.container)
             return
-        # Verificar si el nombre ya existe
-        cur.execute("SELECT * FROM services WHERE name = ?", (self.var_name.get(),))
+
+        # Convertir el nombre del servicio a minúsculas
+        service_name = self.var_name.get().strip().lower()
+
+        # Verificar si el nombre ya existe (insensible a mayúsculas)
+        cur.execute("SELECT * FROM services WHERE LOWER(name) = ?", (service_name,))
         existing_service = cur.fetchone()
 
         if existing_service:
@@ -163,11 +167,9 @@ class ServiceClass:
 
         try:
             cur.execute("INSERT INTO services (name, price, estimated_time) VALUES (?, ?, ?)", (
-                
-                self.var_name.get(), 
-                float(self.var_price.get()), 
+                service_name,
+                float(self.var_price.get()),
                 self.var_estimated_time.get()
-
             ))
             conn.commit()
             messagebox.showinfo("Éxito", "Servicio agregado con éxito", parent=self.container)
@@ -182,11 +184,16 @@ class ServiceClass:
         if self.var_searchtxt.get() == "":
             messagebox.showerror("Error", "Por favor, busca el servicio que deseas actualizar", parent=self.container)
             return
+
+        conn = sqlite3.connect("tbs.db")
+        cursor = conn.cursor()
+
+        # Convertir el nombre del servicio a minúsculas
+        service_name = self.var_name.get().strip().lower()
+
         try:
-            conn = sqlite3.connect("tbs.db")
-            cursor = conn.cursor()
             cursor.execute("UPDATE services SET name=?, price=?, estimated_time=? WHERE id=?", 
-                           (self.var_name.get(), float(self.var_price.get()), self.var_estimated_time.get(), self.var_searchtxt.get()))
+                        (service_name, float(self.var_price.get()), self.var_estimated_time.get(), self.var_searchtxt.get()))
             conn.commit()
             messagebox.showinfo("Éxito", "Servicio actualizado con éxito", parent=self.container)
             self.show_services()

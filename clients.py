@@ -8,7 +8,6 @@ class ClientClass:
         self.container = container
         self.container.config(bg="#bde3ff")
         
-
         # All Variables
         self.var_searchby = StringVar()
         self.var_searchtxt = StringVar()
@@ -45,12 +44,15 @@ class ClientClass:
         btn_search = Button(SearchFrame, text="Buscar", command=self.search, font=self.font_styles["button"],
                             bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_search.place(relx=0.7, rely=0.1, relwidth=0.12, relheight=0.6)
+        btn_search.bind("<Enter>", self.on_enter)
+        btn_search.bind("<Leave>", self.on_leave)
 
         # Botón Limpiar
         btn_clear_search = Button(SearchFrame, text="Limpiar", command=self.clear_search, font=self.font_styles["button"],
                                 bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_clear_search.place(relx=0.85, rely=0.1, relwidth=0.12, relheight=0.6)
-
+        btn_clear_search.bind("<Enter>", self.on_enter)
+        btn_clear_search.bind("<Leave>", self.on_leave)
 
         # MENU DE CLIENTES (PARTE DE ARRIBA)
         title = Label(self.container, text="Clientes/Usuarios", font=self.font_styles["title"],
@@ -89,18 +91,26 @@ class ClientClass:
         btn_add = Button(self.container, text="Guardar", command=self.add, font=self.font_styles["button"],
                          bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_add.place(relx=0.05, rely=0.45, relwidth=0.18, relheight=0.05)
+        btn_add.bind("<Enter>", self.on_enter)
+        btn_add.bind("<Leave>", self.on_leave)
 
         btn_update = Button(self.container, text="Modificar", command=self.update, font=self.font_styles["button"],
                             bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_update.place(relx=0.28, rely=0.45, relwidth=0.18, relheight=0.05)
+        btn_update.bind("<Enter>", self.on_enter)
+        btn_update.bind("<Leave>", self.on_leave)
 
         btn_delete = Button(self.container, text="Borrar", command=self.delete, font=self.font_styles["button"],
                             bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_delete.place(relx=0.53, rely=0.45, relwidth=0.18, relheight=0.05)
+        btn_delete.bind("<Enter>", self.on_enter)
+        btn_delete.bind("<Leave>", self.on_leave)
 
         btn_clear = Button(self.container, text="Limpiar", command=self.clear, font=self.font_styles["button"],
                            bg="#13278f", fg="#bde3ff", bd=3, cursor="hand2")
         btn_clear.place(relx=0.78, rely=0.45, relwidth=0.18, relheight=0.05)
+        btn_clear.bind("<Enter>", self.on_enter)
+        btn_clear.bind("<Leave>", self.on_leave)
 
         # Tabla de datos
         emp_frame = Frame(self.container, bd=3, relief=RIDGE, bg="#bde3ff")
@@ -130,8 +140,11 @@ class ClientClass:
         self.EmployeeTable.bind("<ButtonRelease-1>", self.get_data)
         self.show()
 
+    def on_enter(self, event):
+        event.widget.config(bg="#0d2abf")
 
-
+    def on_leave(self, event):
+        event.widget.config(bg="#13278f")
 
     #=======================================================================================
 
@@ -149,6 +162,7 @@ class ClientClass:
         for widget in self.container.winfo_children():
             if isinstance(widget, (Label, Button, Entry, ttk.Combobox, LabelFrame)):
                 widget.config(font=self.font_styles.get("label", ("Arial", 12)))
+
     def validate_fields(self):
         # Validar si el campo de nombre está vacío
         if self.var_name.get().strip() == "":
