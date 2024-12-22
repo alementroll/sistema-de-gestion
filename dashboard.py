@@ -7,6 +7,7 @@ from sales import SalesClass
 from billing import billClass
 from orders import OrderClass
 from Info import DataVisualizationClass
+from setting import SettingClass
 import sqlite3
 from tkinter import messagebox
 import os
@@ -50,6 +51,10 @@ class TBS:
         self.btn_fullscreen.place(relx=0.65, rely=0.035, relwidth=0.16, relheight=0.08)
         self.btn_fullscreen.config(font=("ARIEL", self.widget_sizes["button_font"], "bold"))
 
+
+
+
+        
         # Reloj
         self.lbl_clock = Label(self.root, text="Bienvenido a Plamparambil Power Tools...!!\t\t Fecha: DD-MM-YYYY\t\t Hora: HH:MM:SS",
                                font=("ARIEL", self.widget_sizes["clock_font"]), bg="#bde3ff", fg="black", borderwidth=3, relief="solid")
@@ -76,7 +81,8 @@ class TBS:
             ("Ventas", self.show_sales),
             ("Boleta", self.show_billing),
             ("Pedidos", self.show_orders),
-            ("Datos", self.show_info)
+            ("Datos", self.show_info),
+            ("ajuste", self.show_setting)
         ]
 
         self.menu_btns = []
@@ -100,6 +106,7 @@ class TBS:
         self.billing_frame = Frame(self.container, bg="white")
         self.orders_frame = Frame(self.container, bg="white")
         self.info_frame = Frame(self.container, bg="white")
+        self.settings_frame = Frame(self.container, bg="white")
 
         self.frames = {
             "clients": self.clients_frame,
@@ -108,7 +115,8 @@ class TBS:
             "sales": self.sales_frame,
             "billing": self.billing_frame,
             "orders": self.orders_frame,
-            "info": self.info_frame
+            "info": self.info_frame,
+            "settings": self.settings_frame
         }
 
         for frame in self.frames.values():
@@ -189,6 +197,14 @@ class TBS:
     def logout(self):
         self.root.destroy()
         os.system("python login.py")
+
+
+
+    def show_setting(self):
+        self.show_frame("settings")
+        if not hasattr(self, "settings"):
+            self.settings_obj = SettingClass(self.settings_frame)
+
 
     def show_client(self):
         self.show_frame("clients")

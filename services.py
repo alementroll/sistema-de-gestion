@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 import sqlite3
 
 class ServiceClass:
-    def __init__(self, container):
+    def __init__(self, parent):
         self.container = container
         self.container.config(bg="#bde3ff")
 
