@@ -47,11 +47,32 @@ def create_db():
             client_id INTEGER,
             device TEXT,
             status TEXT,
-            service_id INTEGER,
+            details TEXT,
             order_date TEXT,
             total_price REAL,
-            FOREIGN KEY(client_id) REFERENCES client(id),
+            FOREIGN KEY(client_id) REFERENCES client(eid)
+        )
+    """)
+    con.commit()
+
+    # Tabla de relación pedidos-servicios
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS order_services(
+            order_id INTEGER,
+            service_id INTEGER,
+            FOREIGN KEY(order_id) REFERENCES orders(id),
             FOREIGN KEY(service_id) REFERENCES services(id)
+        )
+    """)
+    con.commit()
+
+    # Tabla de relación pedidos-productos
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS order_products(
+            order_id INTEGER,
+            product_id INTEGER,
+            FOREIGN KEY(order_id) REFERENCES orders(id),
+            FOREIGN KEY(product_id) REFERENCES stock(pid)
         )
     """)
     con.commit()
