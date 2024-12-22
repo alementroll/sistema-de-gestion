@@ -21,7 +21,7 @@ class Login_System:
 
 
         # Login frame
-        self.name = StringVar()
+        self.email = StringVar()
         self.password = StringVar()
 
         login_frame = Frame(self.root, bd=2, relief=RIDGE, bg="white")
@@ -42,9 +42,9 @@ class Login_System:
             fg="#13278f",
         ).place(relx=0.14, rely=0.25)
 
-        txt_uername = Entry(
+        txt_email = Entry(
             login_frame,
-            textvariable=self.name,
+            textvariable=self.email,
             font=("times new roman", 15),
             bg="#ECECEC",
         ).place(relx=0.14, rely=0.32, relwidth=0.7)
@@ -94,15 +94,15 @@ class Login_System:
         self.lbl_change_image.after(2000, self.animate)
 
     def login(self):
-        con = sqlite3.connect(database=r"tbs.db")
+        con = sqlite3.connect(database="tbs.db")
         cur = con.cursor()
         try:
-            if self.name.get() == "" or self.password.get() == "":
+            if self.email.get() == "" or self.password.get() == "":
                 messagebox.showerror("Error", "Rellena todo los campos", parent=self.root)
             else:
                 cur.execute(
-                    "select utype from client where name=? AND pass=?",
-                    (self.name.get(), self.password.get()),
+                    "select utype from client where email=? AND pass=?",
+                    (self.email.get(), self.password.get()),
                 )
                 user = cur.fetchone()
                 if user is None:
