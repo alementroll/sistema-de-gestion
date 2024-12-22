@@ -206,7 +206,7 @@ class ClientClass:
             messagebox.showerror("Error", f"Error debido a: {str(ex)}", parent=self.container)
 
     def show(self):
-        con = sqlite3.connect(database=r'tbs.db')
+        con = sqlite3.connect(database='tbs.db')
         cur = con.cursor()
         try:
             cur.execute("SELECT eid, name, email, contact, pass, utype FROM client")
@@ -235,7 +235,7 @@ class ClientClass:
         if not self.validate_fields():
             return
 
-        con = sqlite3.connect(database=r'tbs.db')
+        con = sqlite3.connect(database='tbs.db')
         cur = con.cursor()
         try:
             # Verificar si el cliente existe
@@ -261,7 +261,7 @@ class ClientClass:
             messagebox.showerror("Error", f"Error debido a: {str(ex)}", parent=self.container)
 
     def delete(self):
-        con = sqlite3.connect(database=r'tbs.db')
+        con = sqlite3.connect(database='tbs.db')
         cur = con.cursor()
         try:
             current_row = self.EmployeeTable.focus()
@@ -286,7 +286,7 @@ class ClientClass:
 
         #buscar data
     def search(self):
-        con = sqlite3.connect(database=r'tbs.db')
+        con = sqlite3.connect(database='tbs.db')
         cur = con.cursor()
         try:
             search_by = self.var_searchby.get()
