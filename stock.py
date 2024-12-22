@@ -1,12 +1,12 @@
 from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import ttk, messagebox
-import tkinter.ttk as ttk
 import sqlite3
 
 class stockClass:
     def __init__(self, container):
         self.container = container
+        self.container.config(bg="#cae6fa")     
 
         self.var_searchby = StringVar()
         self.var_searchtxt = StringVar()
@@ -19,27 +19,35 @@ class stockClass:
         self.var_price = StringVar()
         self.var_qty = StringVar()
 
+        self.font_sizes = {
+            "title_font": 22,
+            "label_font": 20,
+            "entry_font": 14,
+            "button_font": 17,
+            "table_font": 12
+        }
+
         # Frame para Productos
         self.stock_Frame = Frame(self.container, bd=3, relief=RIDGE, bg="#bde3ff")
         self.stock_Frame.place(relx=0.01, rely=0.02, relwidth=0.4, relheight=0.8)
 
-        self.title = Label(self.stock_Frame, text="Productos", font=("goudy old style", 18, "bold"), bg="#13278f", fg="white", bd=3)
+        self.title = Label(self.stock_Frame, text="Productos", font=("goudy old style", self.font_sizes["title_font"], "bold"), bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
         # Labels y Entradas
-        self.lbl_item_name = Label(self.stock_Frame, text="Nombre", font=("goudy old style", 18, "bold"), bg="#bde3ff")
-        self.lbl_price = Label(self.stock_Frame, text="Precio", font=("goudy old style", 18, "bold"), bg="#bde3ff")
-        self.lbl_qty = Label(self.stock_Frame, text="Cantidad", font=("goudy old style", 18, "bold"), bg="#bde3ff")
+        self.lbl_item_name = Label(self.stock_Frame, text="Nombre", font=("goudy old style", self.font_sizes["label_font"], "bold"), bg="#bde3ff")
+        self.lbl_price = Label(self.stock_Frame, text="Precio", font=("goudy old style", self.font_sizes["label_font"], "bold"), bg="#bde3ff")
+        self.lbl_qty = Label(self.stock_Frame, text="Cantidad", font=("goudy old style", self.font_sizes["label_font"], "bold"), bg="#bde3ff")
 
-        self.txt_name = Entry(self.stock_Frame, textvariable=self.var_name, font=("goudy old style", 12), bg="white")
-        self.txt_price = Entry(self.stock_Frame, textvariable=self.var_price, font=("goudy old style", 12), bg="white")
-        self.txt_qty = Entry(self.stock_Frame, textvariable=self.var_qty, font=("goudy old style", 12), bg="white")
+        self.txt_name = Entry(self.stock_Frame, textvariable=self.var_name, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
+        self.txt_price = Entry(self.stock_Frame, textvariable=self.var_price, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
+        self.txt_qty = Entry(self.stock_Frame, textvariable=self.var_qty, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
 
         # Botones
-        self.btn_add = Button(self.stock_Frame, text="Guardar", command=self.add, font=("goudy old style", 15), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_update = Button(self.stock_Frame, text="Modificar", command=self.update, font=("goudy old style", 15), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_delete = Button(self.stock_Frame, text="Borrar", command=self.delete, font=("goudy old style", 15), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_clear = Button(self.stock_Frame, text="Limpiar", command=self.clear, font=("goudy old style", 15), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_add = Button(self.stock_Frame, text="Guardar", command=self.add, font=("goudy old style", self.font_sizes["button_font"]), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_update = Button(self.stock_Frame, text="Modificar", command=self.update, font=("goudy old style", self.font_sizes["button_font"]), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_delete = Button(self.stock_Frame, text="Borrar", command=self.delete, font=("goudy old style", self.font_sizes["button_font"]), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_clear = Button(self.stock_Frame, text="Limpiar", command=self.clear, font=("goudy old style", self.font_sizes["button_font"]), bg="#13278f", fg="white", bd=3, cursor="hand2")
 
         # Ubicaciones relativas
         self.lbl_item_name.place(relx=0.05, rely=0.2, relwidth=0.3)
@@ -56,23 +64,26 @@ class stockClass:
         self.btn_clear.place(relx=0.8, rely=0.85, relwidth=0.2, relheight=0.1)
 
         # search Frame
-        self.search_frame = LabelFrame(self.container, text="Buscar Producto", font=("goudy old style", 12), bg="#bde3ff", bd=3)
+        self.search_frame = Frame(self.container, bd=3, relief=RIDGE, bg="#bde3ff")
         self.search_frame.place(relx=0.43, rely=0.02, relwidth=0.55, relheight=0.15)
 
+        self.search_title = Label(self.search_frame, text="Buscar Producto", font=("goudy old style", self.font_sizes["title_font"], "bold"), bg="#13278f", fg="white", bd=3)
+        self.search_title.pack(side=TOP, fill=X)
+
         # options
-        self.cmb_search = ttk.Combobox(self.search_frame, textvariable=self.var_searchby, values=("Seleccionar", "Nombre", "Precio","cantidad"), state='readonly', justify=CENTER, font=("goudy old style", 12))
-        self.cmb_search.place(relx=0.02, rely=0.3, relwidth=0.2)
+        self.cmb_search = ttk.Combobox(self.search_frame, textvariable=self.var_searchby, values=("Seleccionar", "Nombre", "Precio","cantidad"), state='readonly', justify=CENTER, font=("goudy old style", self.font_sizes["entry_font"]))
+        self.cmb_search.place(relx=0.02, rely=0.5, relwidth=0.2)
         self.cmb_search.current(0)
 
-        self.txt_search = Entry(self.search_frame, textvariable=self.var_searchtxt, font=("goudy old style", 15), bg="white", bd=3)
-        self.txt_search.place(relx=0.25, rely=0.3, relwidth=0.4)
+        self.txt_search = Entry(self.search_frame, textvariable=self.var_searchtxt, font=("goudy old style", self.font_sizes["entry_font"]), bg="white", bd=3)
+        self.txt_search.place(relx=0.25, rely=0.5, relwidth=0.4)
 
-        self.btn_search = Button(self.search_frame, text="Buscar", command=self.search, font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_search.place(relx=0.67, rely=0.3, relwidth=0.15, relheight=0.4)
+        self.btn_search = Button(self.search_frame, text="Buscar", command=self.search, font=("goudy old style", self.font_sizes["button_font"], "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_search.place(relx=0.67, rely=0.5, relwidth=0.15, relheight=0.4)
 
-        self.btn_clear_search = Button(self.search_frame, text="Limpiar", command=self.clear_search, font=("goudy old style", 15, "bold"),
+        self.btn_clear_search = Button(self.search_frame, text="Limpiar", command=self.clear_search, font=("goudy old style", self.font_sizes["button_font"], "bold"),
                         bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_clear_search.place(relx=0.83, rely=0.3, relwidth=0.15, relheight=0.4)
+        self.btn_clear_search.place(relx=0.83, rely=0.5, relwidth=0.15, relheight=0.4)
 
         # Tabla de stock
         self.s_Frame = Frame(self.container, bd=3, relief=RIDGE)
@@ -106,19 +117,27 @@ class stockClass:
     
     def on_resize(self, event):
         """Ajusta dinámicamente el tamaño del texto."""
-        width = self.container.winfo_width()
-        height = self.container.winfo_height()
-        scale = min(width / 1200, height / 800)
+        new_width = event.width
 
-        font_size_title = max(12, int(18 * scale))
-        font_size_content = max(8, int(12 * scale))
+        # Escalar tamaños de fuente proporcionalmente
+        self.font_sizes["title_font"] = int(new_width / 50)
+        self.font_sizes["label_font"] = int(new_width / 60)
+        self.font_sizes["entry_font"] = int(new_width / 90)
+        self.font_sizes["button_font"] = int(new_width / 100)
+        self.font_sizes["table_font"] = int(new_width / 110)
 
-        # Actualiza fuentes
-        self.title.config(font=("goudy old style", font_size_title, "bold"))
-        self.search_frame.config(font=("goudy old style", font_size_content))
+        # Actualizar fuentes
+        self.title.config(font=("goudy old style", self.font_sizes["title_font"], "bold"))
+        self.search_title.config(font=("goudy old style", self.font_sizes["title_font"], "bold"))
 
         for widget in [self.lbl_item_name, self.lbl_price, self.lbl_qty, self.btn_add, self.btn_update, self.btn_delete, self.btn_clear, self.btn_search, self.btn_clear_search]:
-            widget.config(font=("goudy old style", font_size_content))
+            widget.config(font=("goudy old style", self.font_sizes["label_font"]))
+
+        self.txt_name.config(font=("goudy old style", self.font_sizes["entry_font"]))
+        self.txt_price.config(font=("goudy old style", self.font_sizes["entry_font"]))
+        self.txt_qty.config(font=("goudy old style", self.font_sizes["entry_font"]))
+        self.cmb_search.config(font=("goudy old style", self.font_sizes["entry_font"]))
+        self.txt_search.config(font=("goudy old style", self.font_sizes["entry_font"]))
 
     def show(self):
         con = sqlite3.connect(database=r'tbs.db')

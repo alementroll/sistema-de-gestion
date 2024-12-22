@@ -19,7 +19,6 @@ class TBS:
         self.root = root
         self.root.geometry("1600x900")  # Resolución inicial
         self.fullscreen = False  # Estado inicial de pantalla completa
-        self.root.state("zoomed")
         self.root.bind("<Configure>", self.on_resize)
 
         self.screen_width = self.root.winfo_width()
