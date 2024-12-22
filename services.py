@@ -29,7 +29,7 @@ class ServiceClass:
         # Buscar servicio
         self.lbl_search = Label(self.container, text="Buscar Servicio por nombre", bg="#bde3ff",
                         font=("goudy old style", self.font_sizes["label_font"]))
-        self.lbl_search.place(relx=0.54, rely=0.12, relwidth=0.25, relheight=0.05)
+        self.lbl_search.place(relx=0.52, rely=0.12, relwidth=0.25, relheight=0.05)
         self.txt_search = Entry(self.container, textvariable=self.var_searchtxt, font=("goudy old style", self.font_sizes["entry_font"]), bg="white", bd=3)
         self.txt_search.place(relx=0.76, rely=0.12, relwidth=0.1, relheight=0.05)
         self.btn_search = Button(self.container, text="Buscar", command=self.search, font=("goudy old style", self.font_sizes["button_font"], "bold"),
@@ -40,17 +40,17 @@ class ServiceClass:
         self.lbl_name = Label(self.container, text="Nombre", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_name.place(relx=0.05, rely=0.2)
         self.txt_name = Entry(self.container, textvariable=self.var_name, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
-        self.txt_name.place(relx=0.12, rely=0.2, relwidth=0.25, relheight=0.04)
+        self.txt_name.place(relx=0.14, rely=0.2, relwidth=0.25, relheight=0.04)
 
         self.lbl_price = Label(self.container, text="Precio", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_price.place(relx=0.05, rely=0.3)
         self.txt_price = Entry(self.container, textvariable=self.var_price, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
-        self.txt_price.place(relx=0.12, rely=0.3, relwidth=0.25, relheight=0.04)
+        self.txt_price.place(relx=0.14, rely=0.3, relwidth=0.25, relheight=0.04)
 
         self.lbl_duration = Label(self.container, text="Duración", font=("goudy old style", self.font_sizes["label_font"]), bg="#bde3ff")
         self.lbl_duration.place(relx=0.05, rely=0.4)
         self.txt_duration = Entry(self.container, textvariable=self.var_estimated_time, font=("goudy old style", self.font_sizes["entry_font"]), bg="white")
-        self.txt_duration.place(relx=0.12, rely=0.4, relwidth=0.25, relheight=0.04)
+        self.txt_duration.place(relx=0.14, rely=0.4, relwidth=0.25, relheight=0.04)
 
         # Botones
         self.btn_save = Button(self.container, text="Guardar", command=self.add, font=("goudy old style", self.font_sizes["button_font"]),
