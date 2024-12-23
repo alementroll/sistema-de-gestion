@@ -76,22 +76,6 @@ class Login_System:
             cursor="hand2",
         ).place(relx=0.14, rely=0.7, relwidth=0.7, relheight=0.1)
 
-        # Animation images
-        self.im1 = ImageTk.PhotoImage(file="images/phonela.jpg")
-        self.im2 = ImageTk.PhotoImage(file="images/123.png")
-
-        self.lbl_change_image = Label(self.root, bg="white")
-        self.lbl_change_image.place(relx=0.25, rely=0.13, relwidth=0.2, relheight=0.6)
-
-        self.animate()
-
-    def animate(self):
-        self.im = self.im1
-        self.im1 = self.im2
-        self.im2 = self.im
-
-        self.lbl_change_image.config(image=self.im)
-        self.lbl_change_image.after(2000, self.animate)
 
     def login(self):
         con = sqlite3.connect(database="tbs.db")
