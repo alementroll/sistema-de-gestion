@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk, messagebox
+from tkinter import ttk
 import sqlite3
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -13,10 +13,15 @@ class DataVisualizationClass:
                            bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
-        # Botón para mostrar gráficos
+        # Botón para mostrar gráficos de stock
         self.btn_stock = Button(self.container, text="Mostrar Stock de Productos", command=self.show_stock,
                                 font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_stock.place(relx=0.3, rely=0.1, relwidth=0.4, height=40)  # Centrado horizontalmente
+        self.btn_stock.place(relx=0.2, rely=0.1, relwidth=0.3, height=40)
+
+        # Botón para mostrar cantidad de pedidos
+        self.btn_orders = Button(self.container, text="Mostrar Cantidad de Pedidos", command=self.show_order_count,
+                                font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_orders.place(relx=0.55, rely=0.1, relwidth=0.3, height=40)
 
         # Canvas donde se dibujará el gráfico
         self.canvas_frame = Frame(self.container)
@@ -34,6 +39,17 @@ class DataVisualizationClass:
         con.close()
         return data
 
+    def fetch_order_count(self):
+        """Consulta la cantidad total de pedidos."""
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
+        cur.execute("""
+            SELECT COUNT(*) FROM orders
+        """)
+        count = cur.fetchone()[0]
+        con.close()
+        return count
+
     def show_stock(self):
         """Genera y muestra el gráfico de stock de productos."""
         data = self.fetch_stock_data()
@@ -49,6 +65,22 @@ class DataVisualizationClass:
         ax.set_xlabel('Producto')
         ax.set_ylabel('Cantidad en Stock')
         ax.set_title('Stock de Productos')
+
+        self.clear_canvas()
+        self.display_chart(fig)
+
+    def show_order_count(self):
+        """Muestra la cantidad total de pedidos en un gráfico."""
+        count = self.fetch_order_count()
+        
+        # Crear un gráfico con el conteo de pedidos
+        fig, ax = plt.subplots(figsize=(6, 4))
+        ax.bar(['Total de Pedidos'], [count], color='orange')
+        ax.set_ylabel('Cantidad de Pedidos')
+        ax.set_title('Cantidad Total de Pedidos')
+
+        # Configurar el eje y para mostrar solo números enteros
+        ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
 
         self.clear_canvas()
         self.display_chart(fig)
