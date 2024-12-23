@@ -51,10 +51,6 @@ class TBS:
         self.btn_fullscreen.place(relx=0.65, rely=0.035, relwidth=0.16, relheight=0.08)
         self.btn_fullscreen.config(font=("ARIEL", self.widget_sizes["button_font"], "bold"))
 
-
-
-
-        
         # Reloj
         self.lbl_clock = Label(self.root, text="Bienvenido a Plamparambil Power Tools...!!\t\t Fecha: DD-MM-YYYY\t\t Hora: HH:MM:SS",
                                font=("ARIEL", self.widget_sizes["clock_font"]), bg="#bde3ff", fg="black", borderwidth=3, relief="solid")
@@ -75,12 +71,12 @@ class TBS:
 
         # Botones de menú
         menu_buttons = [
-            ("Clientes", self.show_client),
+            ("Pedidos", self.show_orders),
             ("Servicios", self.show_services),
             ("Productos", self.show_stock),
             ("Ventas", self.show_sales),
             ("Boleta", self.show_billing),
-            ("Pedidos", self.show_orders),
+            ("Clientes", self.show_client),
             ("Datos", self.show_info),
             ("Ajustes", self.show_setting)
         ]
@@ -89,7 +85,7 @@ class TBS:
         for text, command in menu_buttons:
             btn = Button(self.LeftMenu, text=text, command=command, image=self.icon_side, compound=LEFT, padx=20, anchor="center",
                         font=("ARIEL", self.widget_sizes["button_font"], "bold"), bg="white", bd=3, cursor="hand2")
-            btn.pack(pady=5, fill=X, padx=10)  # Cambié pady de 10 a 5
+            btn.pack(pady=10, fill=X, padx=10)
             self.menu_btns.append(btn)
 
         # Contenedor principal para las pantallas
@@ -126,7 +122,7 @@ class TBS:
             frame.lower()  # Envía al fondo
 
         # Mostrar una pantalla por defecto
-        self.show_client()
+        self.show_orders()
 
         self.update_content()
 
@@ -211,7 +207,6 @@ class TBS:
         if not hasattr(self, "settings"):
             self.settings_obj = SettingClass(self.settings_frame)
 
-
     def show_client(self):
         self.show_frame("clients")
         if not hasattr(self, "client_obj"):
@@ -245,7 +240,7 @@ class TBS:
     def show_orders(self):
         self.orders_frame.lift()
         if not hasattr(self, "orders_obj"):
-            self.orders_obj = OrderClass(self.orders_frame, self.show_orders_list,self.reload_clients)
+            self.orders_obj = OrderClass(self.orders_frame, self.show_orders_list, self.reload_clients)
     
     def show_orders_list(self):
         self.show_frame("orders_list")

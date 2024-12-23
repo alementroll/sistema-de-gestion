@@ -5,6 +5,7 @@ import sqlite3
 class OrderListClass:
     def __init__(self, container):
         self.container = container
+        self.container.config(bg="#bde3ff")        
 
         # Título
         self.title = Label(self.container, text="Lista de Pedidos", font=("goudy old style", 25, "bold"),

@@ -20,70 +20,70 @@ class OrderClass:
         self.var_new_client_contact = StringVar()
 
         # Título
-        self.title = Label(self.container, text="Gestión de Pedidos", font=("goudy old style", 25, "bold"),
+        self.title = Label(self.container, text="Gestión de Pedidos", font=("goudy old style", 30, "bold"),
                            bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
         # Selección de tipo de cliente
-        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 20,"bold"), bg="#bde3ff")
+        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 25, "bold"), bg="#bde3ff")
         self.lbl_client_type.place(relx=0.05, rely=0.1)
         self.cmb_client_type = ttk.Combobox(self.container, textvariable=self.var_client_type, state="readonly",
-                                            values=["Cliente Existente", "Cliente Nuevo"], justify=CENTER, font=("goudy old style", 12))
+                                            values=["Cliente Existente", "Cliente Nuevo"], justify=CENTER, font=("goudy old style", 18))
         self.cmb_client_type.place(relx=0.25, rely=0.1, relwidth=0.4)
         self.cmb_client_type.bind("<<ComboboxSelected>>", self.on_client_type_change)
 
         # Campos de entrada para Cliente Existente
-        self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 15), bg="#bde3ff")
+        self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 20), bg="#bde3ff")
         self.lbl_client.place(relx=0.05, rely=0.14)
         self.cmb_client = ttk.Combobox(self.container, textvariable=self.var_client, state="readonly",
-                                       justify=CENTER, font=("goudy old style", 12))
+                                       justify=CENTER, font=("goudy old style", 18))
         self.cmb_client.place(relx=0.25, rely=0.14, relwidth=0.4)
         self.load_clients()
 
         # Campos de entrada para Cliente Nuevo
-        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 20,"bold"), bg="#bde3ff")
-        self.txt_new_client_name = Entry(self.container, textvariable=self.var_new_client_name, font=("goudy old style", 15), bg="white", bd=3)
+        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 25, "bold"), bg="#bde3ff")
+        self.txt_new_client_name = Entry(self.container, textvariable=self.var_new_client_name, font=("goudy old style", 20), bg="white", bd=3)
 
-        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 20), bg="#bde3ff")
-        self.txt_new_client_email = Entry(self.container, textvariable=self.var_new_client_email, font=("goudy old style", 15), bg="white", bd=3)
+        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 25), bg="#bde3ff")
+        self.txt_new_client_email = Entry(self.container, textvariable=self.var_new_client_email, font=("goudy old style", 20), bg="white", bd=3)
 
-        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 20), bg="#bde3ff")
-        self.txt_new_client_contact = Entry(self.container, textvariable=self.var_new_client_contact, font=("goudy old style", 15), bg="white", bd=3)
+        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 25), bg="#bde3ff")
+        self.txt_new_client_contact = Entry(self.container, textvariable=self.var_new_client_contact, font=("goudy old style", 20), bg="white", bd=3)
 
         # Campos de entrada comunes
-        self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 15), bg="#bde3ff")
-        self.lbl_device.place(relx=0.05, rely=0.3)
-        self.txt_device = Entry(self.container, textvariable=self.var_device, font=("goudy old style", 15), bg="white", bd=3)
-        self.txt_device.place(relx=0.25, rely=0.3, relwidth=0.4)
+        self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 20), bg="#bde3ff")
+        self.lbl_device.place(relx=0.05, rely=0.32)
+        self.txt_device = Entry(self.container, textvariable=self.var_device, font=("goudy old style", 20), bg="white", bd=3)
+        self.txt_device.place(relx=0.25, rely=0.32, relwidth=0.4)
 
-        self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 15), bg="#bde3ff")
-        self.lbl_status.place(relx=0.05, rely=0.36)
+        self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 20), bg="#bde3ff")
+        self.lbl_status.place(relx=0.05, rely=0.38)
         self.cmb_status = ttk.Combobox(self.container, textvariable=self.var_status,
                                         values=("Por hacer", "En proceso", "Terminado"),
-                                        state="readonly", justify=CENTER, font=("goudy old style", 12))
-        self.cmb_status.place(relx=0.25, rely=0.36, relwidth=0.4)
+                                        state="readonly", justify=CENTER, font=("goudy old style", 18))
+        self.cmb_status.place(relx=0.25, rely=0.38, relwidth=0.4)
         self.cmb_status.current(0)
 
-        self.lbl_details = Label(self.container, text="Detalles", font=("goudy old style", 15), bg="#bde3ff")
-        self.lbl_details.place(relx=0.05, rely=0.42)
-        self.txt_details = Entry(self.container, textvariable=self.var_details, font=("goudy old style", 15), bg="white", bd=3)
-        self.txt_details.place(relx=0.25, rely=0.42, relwidth=0.4)
+        self.lbl_details = Label(self.container, text="Detalles", font=("goudy old style", 20), bg="#bde3ff")
+        self.lbl_details.place(relx=0.05, rely=0.44)
+        self.txt_details = Entry(self.container, textvariable=self.var_details, font=("goudy old style", 20), bg="white", bd=3)
+        self.txt_details.place(relx=0.25, rely=0.44, relwidth=0.4)
 
-        self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 15), bg="#bde3ff")
-        self.lbl_services.place(relx=0.05, rely=0.48)
-        self.lst_services = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 12), bg="white", bd=3)
-        self.lst_services.place(relx=0.25, rely=0.48, relwidth=0.4, relheight=0.1)
+        self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 20), bg="#bde3ff")
+        self.lbl_services.place(relx=0.05, rely=0.50)
+        self.lst_services = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 18), bg="white", bd=3)
+        self.lst_services.place(relx=0.25, rely=0.50, relwidth=0.4, relheight=0.1)
         self.load_services()
 
         # Botón Agregar
-        self.btn_add = Button(self.container, text="Agregar", command=self.add, font=("goudy old style", 15, "bold"),
+        self.btn_add = Button(self.container, text="Agregar", command=self.add, font=("goudy old style", 20, "bold"),
                                 bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_add.place(relx=0.25, rely=0.72, relwidth=0.2, height=35)
+        self.btn_add.place(relx=0.25, rely=0.74, relwidth=0.2, height=40)
 
         # Botón para cambiar a la lista de pedidos
-        self.btn_show_list = Button(self.container, text="Ver Lista de Pedidos", command=self.show_orders_list_callback, font=("goudy old style", 15, "bold"),
+        self.btn_show_list = Button(self.container, text="Ver Lista de Pedidos", command=self.show_orders_list_callback, font=("goudy old style", 20, "bold"),
                                 bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_show_list.place(relx=0.5, rely=0.72, relwidth=0.3, height=35)
+        self.btn_show_list.place(relx=0.5, rely=0.74, relwidth=0.3, height=40)
 
         # Vinculación de redimensionado
         self.container.bind("<Configure>", self.on_resize)
@@ -125,10 +125,10 @@ class OrderClass:
 
         scale_width = width / 1200  # Escala de referencia para el ancho
         scale_height = height / 700  # Escala de referencia para la altura
-        font_size = int(12 * min(scale_width, scale_height))
+        font_size = int(14 * min(scale_width, scale_height))
 
-        font_size = max(8, font_size)  # Asegura un tamaño mínimo
-        self.title.config(font=("goudy old style", font_size + 6, "bold"))
+        font_size = max(10, font_size)  # Asegura un tamaño mínimo
+        self.title.config(font=("goudy old style", font_size + 10, "bold"))
 
         # Ajuste de tamaño de los elementos
         for widget in [self.lbl_client_type, self.cmb_client_type, self.lbl_client, self.cmb_client,
