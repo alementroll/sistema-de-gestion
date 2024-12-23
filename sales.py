@@ -18,7 +18,7 @@ class SalesClass:
         }
 
         # Inicialización de bill_list
-        self.bill_list = []  # Aquí inicializamos la lista
+        self.bill_list = []  
 
         # Evento de redimensionamiento
         self.container.bind("<Configure>", self.on_resize)
@@ -75,7 +75,6 @@ class SalesClass:
         self.btn_delete.place(relx=0.02, rely=0.85, relwidth=0.25, relheight=0.05)
 
     def on_resize(self, event):
-        # Calcula tamaños proporcionales
         width = event.width
         height = event.height
 
@@ -123,9 +122,9 @@ class SalesClass:
         
         if confirm:
             try:
-                os.remove(file_path)  # Eliminar el archivo
+                os.remove(file_path)  
                 messagebox.showinfo("Éxito", f"Boleta {file_name} eliminada correctamente", parent=self.container)
-                self.show()  # Actualizar la lista
+                self.show() 
             except Exception as e:
                 messagebox.showerror("Error", f"No se pudo eliminar la boleta: {e}", parent=self.container)
 
@@ -144,7 +143,7 @@ class SalesClass:
         self.show()
         self.bill_area.delete('1.0', END)
 
-# Ejemplo de inicialización en una ventana Tk para ver el resultado
+
 if __name__ == "__main__":
     root = Tk()
     frame = Frame(root)

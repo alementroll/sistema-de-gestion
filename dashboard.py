@@ -17,7 +17,7 @@ import time
 class TBS:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1600x900")  # Resolución inicial
+        self.root.geometry("1600x900") 
         self.fullscreen = True
         self.root.bind("<Configure>", self.on_resize)
 
@@ -117,15 +117,15 @@ class TBS:
         }
 
         for frame in self.frames.values():
-            frame.place(relx=0, rely=0, relwidth=1, relheight=1)  # Oculta inicialmente
-            frame.lower()  # Envía al fondo
+            frame.place(relx=0, rely=0, relwidth=1, relheight=1)  
+            frame.lower()  
 
         # Mostrar una pantalla por defecto
         self.show_orders()
 
         self.update_content()
 
-        # Verificar stock al iniciar
+        # Verificar stock
         self.check_stock()
 
         # Verificar el stock cada hora 
@@ -157,16 +157,16 @@ class TBS:
         """Muestra únicamente el frame seleccionado."""
         for name, frame in self.frames.items():
             if name == frame_name:
-                frame.lift()  # Eleva el frame visible
+                frame.lift()  
             else:
-                frame.lower()  # Oculta los demás
+                frame.lower() 
 
-    # Métodos para mostrar cada pantalla
-    def on_resize(self, event):  # Ajusta el tamaño del contenedor principal o elementos según el tamaño de la ventana
+    # Métodos
+    def on_resize(self, event):  
         """Evento que redimensiona los widgets."""
         new_width = event.width
 
-        # Ajuste proporcional de fuentes
+        # Ajuste fuentes
         self.widget_sizes["title_font"] = int(new_width / 30)
         self.widget_sizes["menu_font"] = int(new_width / 40)
         self.widget_sizes["button_font"] = int(new_width / 80)
@@ -261,7 +261,7 @@ class TBS:
         try:
             cur.execute("select * from stock")
             product = cur.fetchall()
-            # Actualizar contenido de alguna etiqueta o botón si es necesario
+
             time_ = time.strftime("%I:%M:%S")
             date_ = time.strftime("%d-%m-%Y")
             self.lbl_clock.config(text=f"Calico's - Gestión Inteligente\t\t Fecha: {str(date_)}\t\t Hora: {str(time_)}")

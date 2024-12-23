@@ -16,7 +16,7 @@ class ServiceClass:
 
         self.font_sizes = {
             "title_font": 20,
-            "label_font": 18,  # Aumentar el tamaño de la fuente de los labels
+            "label_font": 18, 
             "entry_font": 14,
             "button_font": 12,
             "table_font": 12
@@ -176,7 +176,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio agregado con éxito", parent=self.container)
             self.show_services()
             self.clear()
-            self.reload_services_callback()  # Recargar servicios en otras vistas
+            self.reload_services_callback()  
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -200,7 +200,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio actualizado con éxito", parent=self.container)
             self.show_services()
             self.clear()
-            self.reload_services_callback()  # Recargar servicios en otras vistas
+            self.reload_services_callback() 
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -218,7 +218,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio eliminado con éxito", parent=self.container)
             self.show_services()
             self.clear()
-            self.reload_services_callback()  # Recargar servicios en otras vistas
+            self.reload_services_callback()  
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -232,20 +232,20 @@ class ServiceClass:
 
     def search(self):
         if self.var_searchtxt.get() == "":
-            # Si el campo de búsqueda está vacío, mostrar todos los servicios
+           
             self.show_services()
             return
         
         try:
             conn = sqlite3.connect("tbs.db")
             cursor = conn.cursor()
-            # Usamos LIKE para buscar coincidencias parciales y LOWER para hacerlo insensible al caso
+
             cursor.execute("SELECT * FROM services WHERE LOWER(name) LIKE LOWER(?)", ('%' + self.var_searchtxt.get() + '%',))
-            rows = cursor.fetchall()  # Obtener todas las coincidencias
+            rows = cursor.fetchall()  
             if rows:
-                self.update_table(rows)  # Actualizamos la tabla con los resultados encontrados
+                self.update_table(rows) 
             else:
-                # Si no se encuentran coincidencias, mostrar un mensaje y cargar todos los servicios
+          
                 messagebox.showerror("Error", "No se encontraron coincidencias", parent=self.container)
                 self.show_services()
         except Exception as ex:
@@ -254,16 +254,16 @@ class ServiceClass:
             conn.close()
 
     def update_table(self, rows):
-        # Limpiar la tabla antes de insertar nuevas filas
+
         for row in self.servicesTable.get_children():
             self.servicesTable.delete(row)
         
-        # Insertar las filas obtenidas de la búsqueda en la tabla
+  
         for row in rows:
             self.servicesTable.insert("", "end", values=row)
 
     def show_services(self):
-        # Limpiar la tabla antes de insertar todas las filas
+
         for row in self.servicesTable.get_children():
             self.servicesTable.delete(row)
         

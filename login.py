@@ -9,23 +9,17 @@ class Login_System:
     def __init__(self, root):
         self.root = root
         self.root.geometry("1350x700+0+0")
-        blank_space = " "
         self.root.state('zoomed')
-        self.root.title(
-            150 * blank_space
-            + "Inicia sesion"
-        )
+        self.root.title("Inicia sesión".center(150))
         self.root.config(bg="#fafafa")
 
-        # Images
-
-
-        # Login frame
+        # Login
         self.email = StringVar()
         self.password = StringVar()
 
+        # Centrar el formulario
         login_frame = Frame(self.root, bd=2, relief=RIDGE, bg="white")
-        login_frame.place(relx=0.55, rely=0.13, relwidth=0.26, relheight=0.65)
+        login_frame.place(relx=0.5, rely=0.5, relwidth=0.3, relheight=0.6, anchor="center")
 
         title = Label(
             login_frame,
@@ -36,7 +30,7 @@ class Login_System:
 
         lbl_clientid = Label(
             login_frame,
-            text="Nombre",
+            text="Correo",
             font=("Andalus", 15),
             bg="white",
             fg="#13278f",
@@ -76,7 +70,6 @@ class Login_System:
             cursor="hand2",
         ).place(relx=0.14, rely=0.7, relwidth=0.7, relheight=0.1)
 
-
     def login(self):
         con = sqlite3.connect(database="tbs.db")
         cur = con.cursor()
@@ -102,7 +95,7 @@ class Login_System:
                         os.system("python billing.py")
         except Exception as ex:
             messagebox.showerror(
-                "Error", f"Error debido a : {str(ex)} ", parent=self.root
+                "Error", f"Error debido a: {str(ex)}", parent=self.root
             )
 
 
