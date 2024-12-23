@@ -29,7 +29,7 @@ class ServiceClass:
         # Buscar servicio
         self.lbl_search = Label(self.container, text="Buscar Servicio por nombre", bg="#bde3ff",
                         font=("goudy old style", self.font_sizes["label_font"]))
-        self.lbl_search.place(relx=0.52, rely=0.12, relwidth=0.25, relheight=0.05)
+        self.lbl_search.place(relx=0.50, rely=0.12, relwidth=0.25, relheight=0.05)
         self.txt_search = Entry(self.container, textvariable=self.var_searchtxt, font=("goudy old style", self.font_sizes["entry_font"]), bg="white", bd=3)
         self.txt_search.place(relx=0.76, rely=0.12, relwidth=0.1, relheight=0.05)
         self.btn_search = Button(self.container, text="Buscar", command=self.search, font=("goudy old style", self.font_sizes["button_font"], "bold"),

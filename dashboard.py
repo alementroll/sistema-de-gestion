@@ -17,7 +17,7 @@ import time
 class TBS:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("1920x1080")  # Resolución inicial
+        self.root.geometry("1600x900")  # Resolución inicial
         self.fullscreen = True
         self.root.bind("<Configure>", self.on_resize)
 
@@ -89,7 +89,7 @@ class TBS:
         for text, command in menu_buttons:
             btn = Button(self.LeftMenu, text=text, command=command, image=self.icon_side, compound=LEFT, padx=20, anchor="center",
                         font=("ARIEL", self.widget_sizes["button_font"], "bold"), bg="white", bd=3, cursor="hand2")
-            btn.pack(pady=10, fill=X, padx=10)
+            btn.pack(pady=5, fill=X, padx=10)  # Cambié pady de 10 a 5
             self.menu_btns.append(btn)
 
         # Contenedor principal para las pantallas
