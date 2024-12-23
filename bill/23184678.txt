@@ -1,0 +1,20 @@
+
+                        Solufix                    
+    Camilo Campos Nuñez Mesina
+Telefono: +56973840705
+Email: CamiloCampos41@gmail.com
+    ===============================================
+    Cliente: wed
+    Contacto: asd
+    N° Boleta: 23184678    Fecha: 23/12/2024
+    ===============================================
+    Producto           Cantidad        Precio
+    ===============================================
+    
+CPU baja            	1       	CLP.75000.00
+CPU estandar        	1       	CLP.100000.00
+    ===============================================
+    Total Ventas(A)                 CLP.175000.00
+    IVA(19%)                        CLP.33250.00
+    Total Factura(A+IVA)            CLP.208250.00
+    
