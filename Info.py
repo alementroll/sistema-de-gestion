@@ -1,11 +1,14 @@
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog  # Asegúrate de incluir simpledialog
 import sqlite3
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-import os  # Importar el módulo os para abrir el PDF
+import os
+import threading
+import time
+from datetime import datetime
 
 class DataVisualizationClass:
     def __init__(self, container):
@@ -17,31 +20,69 @@ class DataVisualizationClass:
                            bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
+        # Botón para crear recordatorio
+        self.btn_reminder = Button(self.container, text="Crear Recordatorio", command=self.create_reminder,
+                                    font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_reminder.place(relx=0.35, rely=0.1, relwidth=0.3, height=40)
+
         # Botón para mostrar gráficos de stock
         self.btn_stock = Button(self.container, text="Mostrar Stock de Productos", command=self.show_stock,
                                 font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_stock.place(relx=0.2, rely=0.1, relwidth=0.3, height=40)
+        self.btn_stock.place(relx=0.2, rely=0.2, relwidth=0.3, height=40)
 
         # Botón para mostrar cantidad de pedidos
         self.btn_orders = Button(self.container, text="Mostrar Cantidad de Pedidos", command=self.show_order_count,
                                 font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_orders.place(relx=0.55, rely=0.1, relwidth=0.3, height=40)
+        self.btn_orders.place(relx=0.55, rely=0.2, relwidth=0.3, height=40)
 
         # Botón para generar PDF
         self.btn_generate_pdf = Button(self.container, text="Generar PDF Resumen", command=self.generate_pdf,
                                         font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_generate_pdf.place(relx=0.35, rely=0.2, relwidth=0.3, height=40)
+        self.btn_generate_pdf.place(relx=0.35, rely=0.3, relwidth=0.3, height=40)
 
         # Botón para abrir PDF
         self.btn_open_pdf = Button(self.container, text="Abrir PDF Resumen", command=self.open_pdf,
                                     font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_open_pdf.place(relx=0.35, rely=0.3, relwidth=0.3, height=40)
+        self.btn_open_pdf.place(relx=0.35, rely=0.4, relwidth=0.3, height=40)
 
         # Canvas donde se dibujará el gráfico
         self.canvas_frame = Frame(self.container)
-        self.canvas_frame.place(relx=0.01, rely=0.4, relwidth=0.98, relheight=0.55)
+        self.canvas_frame.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.45)
 
         self.pdf_filename = "resumen_datos.pdf"  # Nombre del archivo PDF
+
+        # Variable para almacenar el recordatorio
+        self.reminder_message = None
+        self.reminder_time = None
+
+        # Iniciar un hilo para verificar recordatorios
+        reminder_thread = threading.Thread(target=self.check_reminders)
+        reminder_thread.daemon = True
+        reminder_thread.start()
+
+    def create_reminder(self):
+        """Crear un recordatorio solicitando mensaje, fecha y hora."""
+        self.reminder_message = simpledialog.askstring("Recordatorio", "Ingrese el mensaje del recordatorio:")
+        reminder_time_str = simpledialog.askstring(
+            "Recordatorio",
+            "Ingrese la fecha y hora (formato: DD-MM-AAAA HH:MM AM/PM):"
+        )
+        
+        try:
+            self.reminder_time = datetime.strptime(reminder_time_str, "%d-%m-%Y %I:%M %p")
+            messagebox.showinfo("Éxito", "Recordatorio creado para: " + str(self.reminder_time))
+        except ValueError:
+            messagebox.showerror("Error", "Formato de fecha y hora incorrecto.")
+
+
+
+    def check_reminders(self):
+        """Verifica constantemente si hay recordatorios que deben activarse."""
+        while True:
+            time.sleep(60)  # Verifica cada minuto
+            if self.reminder_time and datetime.now() >= self.reminder_time:
+                messagebox.showinfo("Recordatorio", self.reminder_message)
+                self.reminder_time = None  # Reinicia el recordatorio
 
     def fetch_client_data(self):
         """Consulta los datos de los clientes."""
@@ -148,8 +189,8 @@ class DataVisualizationClass:
         # Datos de pedidos
         c.drawString(100, y_position, "Pedidos:")
         y_position -= 20
-        for order_id, client_id, device, status, details, order_date, total_price in order_data:
-            c.drawString(100, y_position, f"ID: {order_id}, Cliente ID: {client_id}, Dispositivo: {device}, Estado: {status}, Fecha: {order_date}, Total: {total_price}")
+        for order in order_data:
+            c.drawString(100, y_position, f"Pedido ID: {order[0]}")  # Suponiendo que el ID es el primer elemento
             y_position -= 20
 
         # Servicios por pedido
@@ -162,74 +203,48 @@ class DataVisualizationClass:
         # Productos por pedido
         c.drawString(100, y_position, "Productos por Pedido:")
         y_position -= 20
-        for order_id, itemname in order_products:
-            c.drawString(100, y_position, f"Pedido ID: {order_id}, Producto: {itemname}")
+        for order_id, product_name in order_products:
+            c.drawString(100, y_position, f"Pedido ID: {order_id}, Producto: {product_name}")
             y_position -= 20
 
         c.save()
-        messagebox.showinfo("Éxito", f"PDF generado: {self.pdf_filename}")
+        messagebox.showinfo("Éxito", f"PDF guardado como {self.pdf_filename}")
 
     def open_pdf(self):
-        """Abre el PDF generado con el visor predeterminado del sistema."""
-        if os.path.exists(self.pdf_filename):
-            os.startfile(self.pdf_filename)  # Para Windows
-        else:
-            messagebox.showerror("Error", "No se ha generado el PDF aún.")
+        """Abre el PDF generado."""
+        os.startfile(self.pdf_filename)
 
     def show_stock(self):
-        """Genera y muestra el gráfico de stock de productos."""
-        data = self.fetch_stock_data()
-        if not data:
-            messagebox.showerror("Error", "No hay datos de stock para mostrar el gráfico.")
-            return
+        """Muestra los gráficos de stock de productos."""
+        stock_data = self.fetch_stock_data()
+        items = [row[0] for row in stock_data]
+        quantities = [row[1] for row in stock_data]
 
-        productos = [row[0] for row in data]
-        cantidades = [row[1] for row in data]
-
-        fig, ax = plt.subplots(figsize=(8, 6))
-        ax.bar(productos, cantidades, color='lightblue')
-        ax.set_xlabel('Producto')
-        ax.set_ylabel('Cantidad en Stock')
-        ax.set_title('Stock de Productos')
-
-        self.clear_canvas()
-        self.display_chart(fig)
+        plt.figure(figsize=(10, 6))
+        plt.bar(items, quantities, color='blue')
+        plt.title("Stock de Productos")
+        plt.xlabel("Productos")
+        plt.ylabel("Cantidad")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
 
     def show_order_count(self):
-        """Muestra la cantidad total de pedidos en un gráfico."""
-        count = self.fetch_order_count()
-        
-        # Crear un gráfico con el conteo de pedidos
-        fig, ax = plt.subplots(figsize=(6, 4))
-        ax.bar(['Total de Pedidos'], [count], color='orange')
-        ax.set_ylabel('Cantidad de Pedidos')
-        ax.set_title('Conteo Total de Pedidos')
+        """Muestra la cantidad de pedidos en un gráfico."""
+        order_data = self.fetch_order_data()
+        order_count = len(order_data)
 
-        self.clear_canvas()
-        self.display_chart(fig)
+        plt.figure(figsize=(10, 6))
+        plt.bar(["Pedidos"], [order_count], color='orange')
+        plt.title("Cantidad de Pedidos")
+        plt.xlabel("Tipo de Pedido")
+        plt.ylabel("Cantidad")
+        plt.tight_layout()
+        plt.show()
 
-    def clear_canvas(self):
-        """Limpia el canvas para mostrar nuevos gráficos."""
-        for widget in self.canvas_frame.winfo_children():
-            widget.destroy()
-
-    def fetch_order_count(self):
-        con = sqlite3.connect('tbs.db')
-        cur = con.cursor()
-        cur.execute("SELECT COUNT(*) FROM orders")
-        count = cur.fetchone()[0]  # Obtener el resultado de la consulta
-        con.close()
-        return count
-
-    def display_chart(self, fig):
-        """Muestra el gráfico en el canvas."""
-        canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
-        canvas.draw()
-        canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
 if __name__ == "__main__":
     root = Tk()
     app = DataVisualizationClass(root)
     root.geometry("800x600")
-    root.title("Gestión de Datos")
     root.mainloop()
