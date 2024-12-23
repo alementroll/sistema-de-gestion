@@ -8,7 +8,7 @@ import os
 class SalesClass:
     def __init__(self, container):
         self.container = container
-        self.container.config(bg="white")
+        self.container.config(bg="#cae6fa")
 
         self.widget_sizes = {
             "title_font": 20,
@@ -30,7 +30,7 @@ class SalesClass:
         self.title.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.1)
 
         # Factura
-        self.lbl_invoice = Label(self.container, text="Factura No.", font=("goudy old style", self.widget_sizes["label_font"]), bg="white")
+        self.lbl_invoice = Label(self.container, text="Factura No.", font=("goudy old style", self.widget_sizes["label_font"]), bg="#cae6fa")
         self.lbl_invoice.place(relx=0, rely=0.15, relwidth=0.2, relheight=0.05)
 
         self.txt_invoice = Entry(self.container, textvariable=StringVar(), font=("goudy old style", self.widget_sizes["label_font"]), bg="white")

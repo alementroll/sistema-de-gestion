@@ -10,8 +10,9 @@ class SettingClass(Frame):
     title = None  # Atributo de clase para el título
 
     def __init__(self, container):
-        super().__init__(container, bg="#bde3ff")  # Cambia el color de fondo aquí
+        super().__init__(container, bg="#cae6fa")  # Cambia el color de fondo aquí
         self.container = container
+        self.container.config(bg="#cae6fa")
 
         # Verifica si el título ya fue creado
         if SettingClass.title is None:
@@ -22,24 +23,24 @@ class SettingClass(Frame):
         # Botón para realizar respaldo manual
         self.btn_backup = Button(self.container, text="Hacer Respaldo Manual", command=self.create_backup,
                                  font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_backup.place(relx=0.35, rely=0.4, relwidth=0.3, height=50)
+        self.btn_backup.place(relx=0.35, rely=0.25, relwidth=0.3, height=50)
 
         # Botón para restaurar respaldo
         self.btn_restore = Button(self.container, text="Restaurar Respaldo", command=self.restore_backup,
                                   font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_restore.place(relx=0.35, rely=0.5, relwidth=0.3, height=50)
+        self.btn_restore.place(relx=0.35, rely=0.35, relwidth=0.3, height=50)
 
         # Configuración de respaldo automático
         self.auto_backup_label = Label(self.container, text="Respaldo Automático (días):", 
                                        font=("goudy old style", 15, "bold"), bg="#bde3ff")
-        self.auto_backup_label.place(relx=0.3, rely=0.65)
+        self.auto_backup_label.place(relx=0.3, rely=0.5)
 
         self.auto_backup_entry = Entry(self.container, font=("goudy old style", 15), bd=3)
-        self.auto_backup_entry.place(relx=0.5, rely=0.65, relwidth=0.2, height=30)
+        self.auto_backup_entry.place(relx=0.5, rely=0.5, relwidth=0.2, height=30)
 
         self.btn_start_auto_backup = Button(self.container, text="Iniciar Respaldo Automático", command=self.start_auto_backup,
                                              font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_start_auto_backup.place(relx=0.35, rely=0.75, relwidth=0.3, height=50)
+        self.btn_start_auto_backup.place(relx=0.35, rely=0.6, relwidth=0.3, height=50)
 
         self.auto_backup_thread = None
         self.auto_backup_running = False

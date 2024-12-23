@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class DataVisualizationClass:
     def __init__(self, container):
         self.container = container
+        self.container.config(bg="#cae6fa")
 
         # Título
         self.title = Label(self.container, text="Visualización de Datos de Stock", font=("goudy old style", 25, "bold"),

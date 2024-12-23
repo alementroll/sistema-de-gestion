@@ -5,6 +5,7 @@ import sqlite3
 class OrderClass:
     def __init__(self, container, show_orders_list_callback, reload_clients_callback):
         self.container = container
+        self.container.config(bg="#cae6fa")
         self.show_orders_list_callback = show_orders_list_callback
         self.reload_clients_callback = reload_clients_callback
 
@@ -24,7 +25,7 @@ class OrderClass:
         self.title.pack(side=TOP, fill=X)
 
         # Selección de tipo de cliente
-        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 15), bg="white")
+        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 20,"bold"), bg="white")
         self.lbl_client_type.place(relx=0.05, rely=0.1)
         self.cmb_client_type = ttk.Combobox(self.container, textvariable=self.var_client_type, state="readonly",
                                             values=["Cliente Existente", "Cliente Nuevo"], justify=CENTER, font=("goudy old style", 12))
@@ -40,13 +41,13 @@ class OrderClass:
         self.load_clients()
 
         # Campos de entrada para Cliente Nuevo
-        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 15), bg="white")
+        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 20,"bold"), bg="white")
         self.txt_new_client_name = Entry(self.container, textvariable=self.var_new_client_name, font=("goudy old style", 15), bg="white", bd=3)
 
-        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 15), bg="white")
+        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 20), bg="white")
         self.txt_new_client_email = Entry(self.container, textvariable=self.var_new_client_email, font=("goudy old style", 15), bg="white", bd=3)
 
-        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 15), bg="white")
+        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 20), bg="white")
         self.txt_new_client_contact = Entry(self.container, textvariable=self.var_new_client_contact, font=("goudy old style", 15), bg="white", bd=3)
 
         # Campos de entrada comunes
