@@ -342,11 +342,11 @@ class billClass:
     def bill_bottom(self):
         bill_bottom_temp = f'''
     {str("=" * 47)}
-    Total Sales(A)                 Rs.{self.total_sales:.2f}
-    Total sgst(9%)                 Rs.{self.total_sgst:.2f}
-    Total cgst(9%)                 Rs.{self.total_cgst:.2f}
-    Total gst(18%)(B)              Rs.{self.total_gst:.2f}
-    Total Invoice Amount(A+B)      Rs.{self.total_invoice_amount:.2f}
+    Total Sales(A)                 CLP.{self.total_sales:.2f}
+    Total sgst(9%)                 CLP.{self.total_sgst:.2f}
+    Total cgst(9%)                 CLP.{self.total_cgst:.2f}
+    Total gst(18%)(B)              CLP.{self.total_gst:.2f}
+    Total Invoice Amount(A+B)      CLP.{self.total_invoice_amount:.2f}
     '''
         self.txt_bill_area.insert(END, bill_bottom_temp)
 
@@ -366,7 +366,7 @@ class billClass:
                     return
                 
                 # Alineación para cada producto
-                self.txt_bill_area.insert(END, f"\n{name:<20}\t{qty:<8}\tRs.{price:.2f}")
+                self.txt_bill_area.insert(END, f"\n{name:<20}\t{qty:<8}\tCLP.{price:.2f}")
 
                 # Update qty in stock
                 cur.execute('UPDATE stock SET qty = qty - ? WHERE pid = ?', (qty, pid))
@@ -392,7 +392,7 @@ class billClass:
         self.var_cname.set('')
         self.var_contact.set('')
         self.txt_bill_area.delete('1.0', END)
-        self.cartTitle.config(text=f"Cart \t Total Products: [0]")
+        self.cartTitle.config(text=f"Carrito \t Productos Totales: [0]")
         self.var_search.set('')
         self.clear_cart()
         self.show()  # Actualiza la tabla de productos
@@ -401,12 +401,12 @@ class billClass:
 
     def print_bill(self):
         if self.chk_print==1:
-            messagebox.showinfo('Print',"Please wait while printing",parent=self.parent)
+            messagebox.showinfo('Imprimir',"Imprimiendo....",parent=self.parent)
             new_file=tempfile.mktemp('.txt')
             open(new_file,'w').write(self.txt_bill_area.get('1.0',END))
             os.startfile(new_file,'print')
         else:
-            messagebox.showinfo('Print',"Please generate bill, to print the receipt",parent=self.parent)
+            messagebox.showinfo('Impresora',"Genera un Voucher para imprimir",parent=self.parent)
 
     def logout(self):
         self.parent.destroy()
