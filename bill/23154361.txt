@@ -1,0 +1,22 @@
+
+                        Solufix                    
+    Camilo Campos Nuñez Mesina
+Telefono: +56973840705
+Email: CamiloCampos41@gmail.com
+    ===============================================
+    Cliente: ale
+    Contacto: 123
+    N° Boleta: 23154361    Fecha: 23/12/2024
+    ===============================================
+    Producto           Cantidad        Precio
+    ===============================================
+    
+Tarjeta grafica potente	2       	CLP.400000.00
+Tarjeta grafica estandar	1       	CLP.150000.00
+cuaderno            	10      	CLP.10000.00
+CPU potente         	1       	CLP.150000.00
+    ===============================================
+    Total Ventas(A)                 CLP.710000.00
+    IVA(19%)                        CLP.134900.00
+    Total Factura(A+IVA)            CLP.844900.00
+    

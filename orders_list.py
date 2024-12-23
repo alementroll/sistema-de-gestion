@@ -239,26 +239,41 @@ class OrderListClass:
             self.cmb_update_status = ttk.Combobox(self.update_window, textvariable=self.var_update_status, values=("Por hacer", "En proceso", "Terminado"),
                                                   state="readonly", font=("goudy old style", 15))
             self.cmb_update_status.place(relx=0.4, rely=0.3, relwidth=0.5)
-            self.cmb_update_status.bind("<<ComboboxSelected>>", self.on_status_change)
 
             Label(self.update_window, text="Detalles", font=("goudy old style", 15)).place(relx=0.1, rely=0.4)
             Entry(self.update_window, textvariable=self.var_update_details, font=("goudy old style", 15)).place(relx=0.4, rely=0.4, relwidth=0.5)
 
             Label(self.update_window, text="Servicios", font=("goudy old style", 15)).place(relx=0.1, rely=0.5)
 
-            # Lista de servicios con selección múltiple
-            self.lst_update_services = Listbox(self.update_window, selectmode=MULTIPLE, font=("goudy old style", 15), bg="white", bd=3)
-            self.lst_update_services.place(relx=0.4, rely=0.5, relwidth=0.5, relheight=0.3)
+            # Canvas y Scrollbar para los Checkbuttons de servicios
+            self.services_canvas = Canvas(self.update_window, bg="white")
+            self.services_scrollbar = Scrollbar(self.update_window, orient=VERTICAL, command=self.services_canvas.yview)
+            self.services_frame = Frame(self.services_canvas, bg="white")
 
-            # Cargar servicios y seleccionar los que ya están en el pedido
+            self.services_frame.bind(
+                "<Configure>",
+                lambda e: self.services_canvas.configure(
+                    scrollregion=self.services_canvas.bbox("all")
+                )
+            )
+
+            self.services_canvas.create_window((0, 0), window=self.services_frame, anchor="nw")
+            self.services_canvas.configure(yscrollcommand=self.services_scrollbar.set)
+
+            self.services_canvas.place(relx=0.4, rely=0.5, relwidth=0.45, relheight=0.3)
+            self.services_scrollbar.place(relx=0.85, rely=0.5, relheight=0.3)
+
+            # Cargar servicios y crear Checkbuttons
+            self.service_vars = {}
             cur.execute("SELECT id, name FROM services")
             services = cur.fetchall()
             selected_services = data[5].split(", ") if data[5] else []
 
             for service in services:
-                self.lst_update_services.insert(END, f"{service[0]} - {service[1]}")
-                if service[1] in selected_services:
-                    self.lst_update_services.selection_set(END)
+                var = IntVar(value=1 if service[1] in selected_services else 0)
+                chk = Checkbutton(self.services_frame, text=service[1], variable=var, bg="white", font=("goudy old style", 12))
+                chk.pack(anchor="w")
+                self.service_vars[service[0]] = var
 
             Button(self.update_window, text="Guardar", command=lambda: self.save_update(order_id), font=("goudy old style", 15, "bold"),
                    bg="#13278f", fg="white", cursor="hand2").place(relx=0.3, rely=0.85, relwidth=0.4, height=35)
@@ -266,15 +281,6 @@ class OrderListClass:
             messagebox.showerror("Error", f"Error al cargar datos del pedido: {str(ex)}")
         finally:
             con.close()
-
-    def on_status_change(self, event):
-        selected_services = self.lst_update_services.curselection()
-        self.selected_services_ids = [self.lst_update_services.get(i) for i in selected_services]
-
-    def restore_selected_services(self):
-        for service in self.selected_services_ids:
-            index = self.lst_update_services.get(0, END).index(service)
-            self.lst_update_services.selection_set(index)
 
     def save_update(self, order_id):
         con = sqlite3.connect(database=r'tbs.db')
@@ -289,10 +295,9 @@ class OrderListClass:
 
             # Actualizar servicios del pedido
             cur.execute("DELETE FROM order_services WHERE order_id = ?", (order_id,))
-            selected_services = self.lst_update_services.curselection()
-            for i in selected_services:
-                service_id = int(self.lst_update_services.get(i).split(" - ")[0])
-                cur.execute("INSERT INTO order_services (order_id, service_id) VALUES (?, ?)", (order_id, service_id))
+            for service_id, var in self.service_vars.items():
+                if var.get() == 1:
+                    cur.execute("INSERT INTO order_services (order_id, service_id) VALUES (?, ?)", (order_id, service_id))
 
             con.commit()
             messagebox.showinfo("Éxito", "Pedido actualizado correctamente")
