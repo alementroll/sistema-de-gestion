@@ -5,14 +5,15 @@ import shutil
 import os
 import threading
 import time
+from tkinter import filedialog
 
 class SettingClass(Frame):
     title = None  # Atributo de clase para el título
 
     def __init__(self, container):
-        super().__init__(container, bg="#cae6fa")  # Cambia el color de fondo aquí
+        super().__init__(container, bg="#bde3ff")  # Cambia el color de fondo aquí
         self.container = container
-        self.container.config(bg="#cae6fa")
+        self.container.config(bg="#bde3ff")
 
         # Verifica si el título ya fue creado
         if SettingClass.title is None:

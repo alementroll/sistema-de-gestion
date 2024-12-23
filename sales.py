@@ -8,7 +8,7 @@ import os
 class SalesClass:
     def __init__(self, container):
         self.container = container
-        self.container.config(bg="#cae6fa")
+        self.container.config(bg="#bde3ff")
 
         self.widget_sizes = {
             "title_font": 20,

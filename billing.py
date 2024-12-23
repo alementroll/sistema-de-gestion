@@ -9,7 +9,7 @@ import tempfile
 class billClass:
     def __init__(self, parent):
         self.parent = parent
-        self.parent.config(bg="#cae6fa")
+        self.parent.config(bg="#bde3ff")
         self.cart_list = []
         self.chk_print = 0
 

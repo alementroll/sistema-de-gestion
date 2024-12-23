@@ -5,7 +5,7 @@ import sqlite3
 class OrderClass:
     def __init__(self, container, show_orders_list_callback, reload_clients_callback):
         self.container = container
-        self.container.config(bg="#cae6fa")
+        self.container.config(bg="#bde3ff")
         self.show_orders_list_callback = show_orders_list_callback
         self.reload_clients_callback = reload_clients_callback
 
@@ -25,7 +25,7 @@ class OrderClass:
         self.title.pack(side=TOP, fill=X)
 
         # Selección de tipo de cliente
-        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 20,"bold"), bg="white")
+        self.lbl_client_type = Label(self.container, text="Tipo de Cliente", font=("goudy old style", 20,"bold"), bg="#bde3ff")
         self.lbl_client_type.place(relx=0.05, rely=0.1)
         self.cmb_client_type = ttk.Combobox(self.container, textvariable=self.var_client_type, state="readonly",
                                             values=["Cliente Existente", "Cliente Nuevo"], justify=CENTER, font=("goudy old style", 12))
@@ -33,7 +33,7 @@ class OrderClass:
         self.cmb_client_type.bind("<<ComboboxSelected>>", self.on_client_type_change)
 
         # Campos de entrada para Cliente Existente
-        self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 15), bg="white")
+        self.lbl_client = Label(self.container, text="Cliente", font=("goudy old style", 15), bg="#bde3ff")
         self.lbl_client.place(relx=0.05, rely=0.14)
         self.cmb_client = ttk.Combobox(self.container, textvariable=self.var_client, state="readonly",
                                        justify=CENTER, font=("goudy old style", 12))
@@ -41,22 +41,22 @@ class OrderClass:
         self.load_clients()
 
         # Campos de entrada para Cliente Nuevo
-        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 20,"bold"), bg="white")
+        self.lbl_new_client_name = Label(self.container, text="Nombre", font=("goudy old style", 20,"bold"), bg="#bde3ff")
         self.txt_new_client_name = Entry(self.container, textvariable=self.var_new_client_name, font=("goudy old style", 15), bg="white", bd=3)
 
-        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 20), bg="white")
+        self.lbl_new_client_email = Label(self.container, text="Correo", font=("goudy old style", 20), bg="#bde3ff")
         self.txt_new_client_email = Entry(self.container, textvariable=self.var_new_client_email, font=("goudy old style", 15), bg="white", bd=3)
 
-        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 20), bg="white")
+        self.lbl_new_client_contact = Label(self.container, text="Teléfono", font=("goudy old style", 20), bg="#bde3ff")
         self.txt_new_client_contact = Entry(self.container, textvariable=self.var_new_client_contact, font=("goudy old style", 15), bg="white", bd=3)
 
         # Campos de entrada comunes
-        self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 15), bg="white")
+        self.lbl_device = Label(self.container, text="Aparato", font=("goudy old style", 15), bg="#bde3ff")
         self.lbl_device.place(relx=0.05, rely=0.3)
         self.txt_device = Entry(self.container, textvariable=self.var_device, font=("goudy old style", 15), bg="white", bd=3)
         self.txt_device.place(relx=0.25, rely=0.3, relwidth=0.4)
 
-        self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 15), bg="white")
+        self.lbl_status = Label(self.container, text="Estado", font=("goudy old style", 15), bg="#bde3ff")
         self.lbl_status.place(relx=0.05, rely=0.36)
         self.cmb_status = ttk.Combobox(self.container, textvariable=self.var_status,
                                         values=("Por hacer", "En proceso", "Terminado"),
@@ -64,12 +64,12 @@ class OrderClass:
         self.cmb_status.place(relx=0.25, rely=0.36, relwidth=0.4)
         self.cmb_status.current(0)
 
-        self.lbl_details = Label(self.container, text="Detalles", font=("goudy old style", 15), bg="white")
+        self.lbl_details = Label(self.container, text="Detalles", font=("goudy old style", 15), bg="#bde3ff")
         self.lbl_details.place(relx=0.05, rely=0.42)
         self.txt_details = Entry(self.container, textvariable=self.var_details, font=("goudy old style", 15), bg="white", bd=3)
         self.txt_details.place(relx=0.25, rely=0.42, relwidth=0.4)
 
-        self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 15), bg="white")
+        self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 15), bg="#bde3ff")
         self.lbl_services.place(relx=0.05, rely=0.48)
         self.lst_services = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 12), bg="white", bd=3)
         self.lst_services.place(relx=0.25, rely=0.48, relwidth=0.4, relheight=0.1)

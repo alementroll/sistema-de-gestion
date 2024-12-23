@@ -13,7 +13,7 @@ from datetime import datetime
 class DataVisualizationClass:
     def __init__(self, container):
         self.container = container
-        self.container.config(bg="#cae6fa")
+        self.container.config(bg="#bde3ff")
 
         # Título
         self.title = Label(self.container, text="Visualización de Datos de Stock", font=("goudy old style", 25, "bold"),
