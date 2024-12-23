@@ -84,7 +84,7 @@ class TBS:
         for text, command in menu_buttons:
             btn = Button(self.LeftMenu, text=text, command=command, image=self.icon_side, compound=LEFT, padx=20, anchor="center",
                         font=("ARIEL", self.widget_sizes["button_font"], "bold"), bg="white", bd=3, cursor="hand2")
-            btn.pack(pady=10, fill=X, padx=10)
+            btn.pack(pady=5, fill=X, padx=10)  # Cambié pady de 10 a 5 para reducir el espacio entre botones
             self.menu_btns.append(btn)
 
         # Contenedor principal para las pantallas
