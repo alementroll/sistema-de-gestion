@@ -13,7 +13,7 @@ class billClass:
         self.cart_list = []
         self.chk_print = 0
 
-        # Product frame
+
         ProductFrame1 = Frame(self.parent, bd=4, relief=RIDGE, bg="#cae6fa")
         ProductFrame1.place(x=6, y=0, width=410, height=550)
 
@@ -32,7 +32,7 @@ class billClass:
         btn_search = Button(ProductFrame2, text="Buscar", command=self.search, font=("goudy old style", 15, "bold"), bg="white", fg="#13278f", cursor="hand2").place(x=285, y=45, width=95, height=25)
         btn_show_all = Button(ProductFrame2, text="Mostrar todos", command=self.show, font=("goudy old style", 15, "bold"), bg="white", fg="#13278f", cursor="hand2").place(x=285, y=5, width=95, height=25)
 
-        # Product Details
+
         ProductFrame3 = Frame(ProductFrame1, bd=3, relief=RIDGE)
         ProductFrame3.place(x=2, y=140, width=398, height=385)
 
@@ -42,15 +42,15 @@ class billClass:
         self.product_Table = ttk.Treeview(ProductFrame3, columns=("pid", "itemname", "price", "qty"), yscrollcommand=scrolly.set, xscrollcommand=scrollx.set)
         scrollx.pack(side=BOTTOM, fill=X)
         scrolly.pack(side=RIGHT, fill=Y)
-        scrollx.config(command=self.product_Table.xview)  # horizontal scrollbar
-        scrolly.config(command=self.product_Table.yview)  # vertical scrollbar
+        scrollx.config(command=self.product_Table.xview)  
+        scrolly.config(command=self.product_Table.yview)  
 
         self.product_Table.heading("pid", text="PID No.")
         self.product_Table.heading("itemname", text="Nombre")
         self.product_Table.heading("price", text="Precio")
         self.product_Table.heading("qty", text="Cantidad")
 
-        # Tamaño de las columnas
+
         self.product_Table["show"] = "headings"
 
         self.product_Table.column("pid", width=40)
@@ -63,7 +63,7 @@ class billClass:
         lbl_note = Label(ProductFrame1, text="Nota : Pon 0 para eliminar el producto del carrito", font=("goudy old style", 11), anchor='w', bg="white", fg="red")
         lbl_note.pack(side=BOTTOM, fill=X)
 
-        # Customer Frame
+
         self.var_cname = StringVar()
         self.var_contact = StringVar()
         CustomerFrame = Frame(self.parent, bd=4, relief=RIDGE, bg="white")
@@ -78,7 +78,7 @@ class billClass:
         lbl_contact = Label(CustomerFrame, text="Telefono", font=("goudy old style", 15, "bold"), bg="white", fg="#13278f").place(x=280, y=35)
         txt_contact = Entry(CustomerFrame, textvariable=self.var_contact, font=("goudy old style", 13), bg="#FAEDEA").place(x=360, y=35, width=140)
 
-        # Cart frame
+
         CartFrame = Frame(self.parent, bd=4, relief=RIDGE, bg="white")
         CartFrame.place(x=420, y=80, width=530, height=330)
 
@@ -91,8 +91,8 @@ class billClass:
         self.cartTable = ttk.Treeview(CartFrame, columns=("pid", "itemname", "price", "qty"), yscrollcommand=scrolly.set, xscrollcommand=scrollx.set)
         scrollx.pack(side=BOTTOM, fill=X)
         scrolly.pack(side=RIGHT, fill=Y)
-        scrollx.config(command=self.cartTable.xview)  # horizontal scrollbar
-        scrolly.config(command=self.cartTable.yview)  # vertical scrollbar
+        scrollx.config(command=self.cartTable.xview) 
+        scrolly.config(command=self.cartTable.yview) 
 
         self.cartTable.heading("pid", text="PID No.")
         self.cartTable.heading("itemname", text="Nombre")
@@ -109,7 +109,7 @@ class billClass:
         self.cartTable.pack(fill=BOTH, expand=1)
         self.cartTable.bind("<ButtonRelease-1>", self.get_data_cart)
 
-        # Add cart widgets frame
+
         self.var_pid = StringVar()
         self.var_pname = StringVar()
         self.var_price = StringVar()
@@ -132,7 +132,7 @@ class billClass:
 
         btn_add_cart = Button(Add_cartwidgetsFrame, text="Añadir | Modificar Carrito", command=self.add_update_cart, font=("goudy old style", 10, "bold"), bg="#13278f", fg="white", cursor="hand2").place(x=340, y=70, width=180, height=30)
 
-        # Billing area
+        # Billing
         billFrame = Frame(self.parent, bd=2, relief=RIDGE, bg="white")
         billFrame.place(x=953, y=0, width=410, height=410)
 
@@ -146,7 +146,7 @@ class billClass:
         self.txt_bill_area.pack(fill=BOTH, expand=1)
         scrolly.config(command=self.txt_bill_area.yview)
 
-        # Billing buttons
+        # Billing 
         billMenuFrame = Frame(self.parent, bd=2, relief=RIDGE, bg="white")
         billMenuFrame.place(x=953, y=370, width=410, height=140)
 
@@ -171,14 +171,14 @@ class billClass:
             for row in rows:
                 self.product_Table.insert('', END, values=row)
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.parent)
+            messagebox.showerror("Error", f"Error debido : {str(ex)} ", parent=self.parent)
 
     def search(self):
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
             if self.var_search.get() == "":
-                messagebox.showerror("Error", "Search Input should be required", parent=self.parent)
+                messagebox.showerror("Error", "Ingresa algo para buscar", parent=self.parent)
             else:
                 cur.execute("select pid, itemname, price, qty from stock where itemname LIKE '%" + self.var_search.get() + "%'")
                 rows = cur.fetchall()
@@ -187,9 +187,9 @@ class billClass:
                     for row in rows:
                         self.product_Table.insert('', END, values=row)
                 else:
-                    messagebox.showerror("Error", "No record found!!!", parent=self.parent)
+                    messagebox.showerror("Error", "No registro!!!", parent=self.parent)
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.parent)
+            messagebox.showerror("Error", f"Error debido : {str(ex)} ", parent=self.parent)
 
     def get_data(self, ev):
         f = self.product_Table.focus()
@@ -246,7 +246,7 @@ class billClass:
                 self.cart_list.append(cart_data)
             self.show_cart()
             self.bill_updates()
-            self.show()  # Actualiza la tabla de productos
+            self.show()  
 
     def bill_updates(self):
         self.total_sales = 0
@@ -278,7 +278,7 @@ class billClass:
         print(str(self.total_sales))
         print(str(self.total_invoice_amount))
 
-        self.cartTitle.config(text=f"Cart \t Total Products: [{str(len(self.cart_list))}]")
+        self.cartTitle.config(text=f"Carrito \t Productos: [{str(len(self.cart_list))}]")
 
     def show_cart(self):
         try:
@@ -286,19 +286,19 @@ class billClass:
             for row in self.cart_list:
                 self.cartTable.insert('', END, values=row)
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.parent)
+            messagebox.showerror("Error", f"Error debido : {str(ex)} ", parent=self.parent)
 
     def generate_bill(self):
         if self.var_cname.get() == '' or self.var_contact.get() == '':
-            messagebox.showerror('Error', "Customer Details are required", parent=self.parent)
+            messagebox.showerror('Error', "Ingrese detalles del cliente", parent=self.parent)
         elif len(self.cart_list) == 0:
-            messagebox.showerror('Error', "Please Add product to the cart", parent=self.parent)
+            messagebox.showerror('Error', "Añada un producto al carrito", parent=self.parent)
         else:
-            # Bill top
+ 
             self.bill_top()
-            # Bill Middle
+
             self.bill_middle()
-            # Bill Bottom
+  
             self.bill_bottom()
 
             fp = open(f'bill/{str(self.invoice)}.txt', 'w')
@@ -306,22 +306,22 @@ class billClass:
             fp.close()
             messagebox.showinfo('Correcto', "Voucher generado", parent=self.parent)
             self.chk_print = 1
-            self.show()  # Actualiza la tabla de productos
-            self.show_cart()  # Actualiza la tabla del carrito
+            self.show()  
+            self.show_cart()  
 
 
     def bill_top(self):
-        # Generar número único de factura
+
         self.invoice = int(time.strftime("%H%M%S")) + int(time.strftime("%d%m%Y"))
 
-        # Crear la plantilla de la cabecera
+
         company_name = "Solufix"
         owner_details = "Camilo Campos Nuñez Mesina\nTelefono: +56973840705\nEmail: CamiloCampos41@gmail.com"
         separator = "=" * 47
         client_name = self.var_cname.get() if self.var_cname.get() else "Cliente no registrado"
         contact_info = self.var_contact.get() if self.var_contact.get() else "Sin contacto"
 
-        # Crear la factura
+       
         bill_top_temp = f'''
     {company_name:^47}
     {owner_details:^47}
@@ -334,7 +334,7 @@ class billClass:
     {separator}
     '''
 
-        # Limpia el área de texto y agrega la nueva cabecera
+    
         self.txt_bill_area.delete('1.0', END)
         self.txt_bill_area.insert('1.0', bill_top_temp)
 
@@ -373,7 +373,7 @@ class billClass:
             con.close()
             self.show()
         except Exception as ex:
-            messagebox.showerror("Error", f"Error due to : {str(ex)} ", parent=self.parent)
+            messagebox.showerror("Error", f"Error debido a : {str(ex)} ", parent=self.parent)
 
 
 
@@ -383,7 +383,7 @@ class billClass:
         self.var_pname.set('')
         self.var_price.set('')
         self.var_qty.set('')
-        # self.lbl_inStock.config(text=f"In Stock")
+
         self.var_stock.set('')
     
     def clear_all(self):
@@ -394,8 +394,8 @@ class billClass:
         self.cartTitle.config(text=f"Carrito \t Productos Totales: [0]")
         self.var_search.set('')
         self.clear_cart()
-        self.show()  # Actualiza la tabla de productos
-        self.show_cart()  # Actualiza la tabla del carrito
+        self.show()  
+        self.show_cart()  
         self.chk_print = 0
 
     def print_bill(self):
