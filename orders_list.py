@@ -12,30 +12,9 @@ class OrderListClass:
                            bg="#13278f", fg="white", bd=3)
         self.title.pack(side=TOP, fill=X)
 
-        # Frame para la lista de pedidos con scroll
-        self.order_frame = Frame(self.container, bd=3, relief=RIDGE)
-        self.order_frame.place(relx=0.01, rely=0.1, relwidth=0.98, relheight=0.8)
-
-        self.canvas = Canvas(self.order_frame, bg="#bde3ff")
-        self.scrollbar = Scrollbar(self.order_frame, orient=VERTICAL, command=self.canvas.yview)
-        self.scrollable_frame = Frame(self.canvas, bg="#bde3ff")
-
-        self.scrollable_frame.bind(
-            "<Configure>",
-            lambda e: self.canvas.configure(
-                scrollregion=self.canvas.bbox("all")
-            )
-        )
-
-        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-
-        self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
-        self.scrollbar.pack(side=RIGHT, fill=Y)
-
         # Filtros
         self.filter_frame = Frame(self.container, bg="#bde3ff")
-        self.filter_frame.place(relx=0.01, rely=0.02, relwidth=0.98, relheight=0.08)
+        self.filter_frame.place(relx=0.01, rely=0.1, relwidth=0.98, relheight=0.08)
 
         self.filter_by = StringVar()
         self.filter_by.set("Nombre")
@@ -60,6 +39,27 @@ class OrderListClass:
         self.btn_clear_filter = Button(self.filter_frame, text="Limpiar Filtro", command=self.clear_filter, font=("goudy old style", 15, "bold"),
                                        bg="#13278f", fg="white", cursor="hand2")
         self.btn_clear_filter.place(relx=0.5, rely=0.1, relwidth=0.15)
+
+        # Frame para la lista de pedidos con scroll
+        self.order_frame = Frame(self.container, bd=3, relief=RIDGE)
+        self.order_frame.place(relx=0.01, rely=0.2, relwidth=0.98, relheight=0.75)
+
+        self.canvas = Canvas(self.order_frame, bg="#bde3ff")
+        self.scrollbar = Scrollbar(self.order_frame, orient=VERTICAL, command=self.canvas.yview)
+        self.scrollable_frame = Frame(self.canvas, bg="#bde3ff")
+
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(
+                scrollregion=self.canvas.bbox("all")
+            )
+        )
+
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+
+        self.canvas.pack(side=LEFT, fill=BOTH, expand=True)
+        self.scrollbar.pack(side=RIGHT, fill=Y)
 
         self.show()
 
