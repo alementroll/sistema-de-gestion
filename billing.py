@@ -9,12 +9,12 @@ import tempfile
 class billClass:
     def __init__(self, parent):
         self.parent = parent
-        self.parent.config(bg="white")
+        self.parent.config(bg="#cae6fa")
         self.cart_list = []
         self.chk_print = 0
 
         # Product frame
-        ProductFrame1 = Frame(self.parent, bd=4, relief=RIDGE, bg="white")
+        ProductFrame1 = Frame(self.parent, bd=4, relief=RIDGE, bg="#cae6fa")
         ProductFrame1.place(x=6, y=0, width=410, height=550)
 
         pTitle = Label(ProductFrame1, text="Productos", font=("goudy old style", 15, "bold"), bg="#13278f", fg="white")
