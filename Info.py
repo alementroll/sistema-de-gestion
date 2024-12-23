@@ -45,9 +45,6 @@ class DataVisualizationClass:
                                     font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
         self.btn_open_pdf.place(relx=0.35, rely=0.4, relwidth=0.3, height=40)
 
-        # Canvas donde se dibujará el gráfico
-        self.canvas_frame = Frame(self.container)
-        self.canvas_frame.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.45)
 
         self.pdf_filename = "resumen_datos.pdf"  # Nombre del archivo PDF
 

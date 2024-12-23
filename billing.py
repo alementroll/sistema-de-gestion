@@ -20,7 +20,7 @@ class billClass:
         pTitle = Label(ProductFrame1, text="Productos", font=("goudy old style", 15, "bold"), bg="#13278f", fg="white")
         pTitle.pack(side=TOP, fill=X)
 
-        # Product Search Frame
+        # Izquierda
         self.var_search = StringVar()
         ProductFrame2 = Frame(ProductFrame1, bd=4, relief=RIDGE, bg="white")
         ProductFrame2.place(x=2, y=42, width=398, height=90)
@@ -132,7 +132,7 @@ class billClass:
 
         btn_add_cart = Button(Add_cartwidgetsFrame, text="Añadir | Modificar Carrito", command=self.add_update_cart, font=("goudy old style", 10, "bold"), bg="#13278f", fg="white", cursor="hand2").place(x=340, y=70, width=180, height=30)
 
-        # Billing
+        # Pago
         billFrame = Frame(self.parent, bd=2, relief=RIDGE, bg="white")
         billFrame.place(x=953, y=0, width=410, height=410)
 
@@ -146,7 +146,7 @@ class billClass:
         self.txt_bill_area.pack(fill=BOTH, expand=1)
         scrolly.config(command=self.txt_bill_area.yview)
 
-        # Billing 
+        # Pago 2
         billMenuFrame = Frame(self.parent, bd=2, relief=RIDGE, bg="white")
         billMenuFrame.place(x=953, y=370, width=410, height=140)
 
@@ -160,6 +160,8 @@ class billClass:
         btn_print.place(x=150, y=80, width=120, height=70)
 
         self.show()
+
+#Funciones
 
     def show(self):
         con = sqlite3.connect(database=r'tbs.db')

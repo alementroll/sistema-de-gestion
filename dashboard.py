@@ -52,7 +52,7 @@ class TBS:
         self.btn_fullscreen.config(font=("ARIEL", self.widget_sizes["button_font"], "bold"))
 
         # Reloj
-        self.lbl_clock = Label(self.root, text="Bienvenido a Plamparambil Power Tools...!!\t\t Fecha: DD-MM-YYYY\t\t Hora: HH:MM:SS",
+        self.lbl_clock = Label(self.root, text="prueba\t\t Fecha: DD-MM-YYYY\t\t Hora: HH:MM:SS",
                                font=("ARIEL", self.widget_sizes["clock_font"]), bg="#bde3ff", fg="black", borderwidth=3, relief="solid")
         self.lbl_clock.place(relx=0, rely=0.15, relwidth=1, relheight=0.05)
 
