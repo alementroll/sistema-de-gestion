@@ -213,6 +213,14 @@ class DataVisualizationClass:
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
 
+    def fetch_order_count(self):
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
+        cur.execute("SELECT COUNT(*) FROM orders")
+        count = cur.fetchone()[0]  # Obtener el resultado de la consulta
+        con.close()
+        return count
+
     def display_chart(self, fig):
         """Muestra el gráfico en el canvas."""
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
