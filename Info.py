@@ -46,7 +46,7 @@ class DataVisualizationClass:
         self.btn_open_pdf.place(relx=0.35, rely=0.4, relwidth=0.3, height=40)
 
 
-        self.pdf_filename = "resumen_datos.pdf"  # Nombre del archivo PDF
+        self.pdf_filename = "resumen_datos.pdf" 
 
         # Variable para almacenar el recordatorio
         self.reminder_message = None
@@ -76,10 +76,10 @@ class DataVisualizationClass:
     def check_reminders(self):
         """Verifica constantemente si hay recordatorios que deben activarse."""
         while True:
-            time.sleep(60)  # Verifica cada minuto
+            time.sleep(60)  
             if self.reminder_time and datetime.now() >= self.reminder_time:
                 messagebox.showinfo("Recordatorio", self.reminder_message)
-                self.reminder_time = None  # Reinicia el recordatorio
+                self.reminder_time = None 
 
     def fetch_client_data(self):
         """Consulta los datos de los clientes."""
@@ -187,7 +187,7 @@ class DataVisualizationClass:
         c.drawString(100, y_position, "Pedidos:")
         y_position -= 20
         for order in order_data:
-            c.drawString(100, y_position, f"Pedido ID: {order[0]}")  # Suponiendo que el ID es el primer elemento
+            c.drawString(100, y_position, f"Pedido ID: {order[0]}")
             y_position -= 20
 
         # Servicios por pedido

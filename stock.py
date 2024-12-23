@@ -143,7 +143,7 @@ class stockClass:
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            # Cambia la consulta SQL para obtener solo el nombre del producto
+
             cur.execute("SELECT pid, itemname, price, qty FROM stock")
             rows = cur.fetchall()
             self.StockTable.delete(*self.StockTable.get_children())
@@ -190,7 +190,7 @@ class stockClass:
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            if self.var_pid.get() == "":  # Verifica que el ID del producto esté seleccionado
+            if self.var_pid.get() == "":  
                 messagebox.showerror("Error", "Selecciona un producto de la lista", parent=self.container)
             else:
                 cur.execute("Select * from stock where pid=?", (self.var_pid.get(),))
@@ -198,7 +198,7 @@ class stockClass:
                 if row is None:
                     messagebox.showerror("Error", "Producto no encontrado, selecciona de la lista", parent=self.container)
                 else:
-                    # Actualiza usando el ID del producto
+   
                     cur.execute("Update stock set itemname=?, price=?, qty=? where pid=?", (
                         self.var_name.get(),
                         self.var_price.get(),
@@ -238,16 +238,16 @@ class stockClass:
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            # Obtener los valores del combobox y del campo de texto de búsqueda
+
             search_by = self.var_searchby.get()
             search_txt = self.var_searchtxt.get()
 
-            # Validar si se seleccionó una opción válida en el combobox
+   
             if search_by == "Seleccionar":
                 messagebox.showerror("Error", "Seleccione un criterio de búsqueda", parent=self.container)
                 return
 
-            # Construir la consulta SQL dependiendo del criterio de búsqueda seleccionado
+
             query = None
             if search_by == "Nombre":
                 query = "SELECT pid, itemname, price, qty FROM stock WHERE itemname LIKE ?"
@@ -257,20 +257,20 @@ class stockClass:
                 query = "SELECT pid, itemname, price, qty FROM stock WHERE qty LIKE ?"
 
             if query:
-                # Ejecutar la consulta con el texto de búsqueda como parámetro, usando LIKE para la búsqueda parcial
+  
                 cur.execute(query, (f"%{search_txt}%",))
 
-            # Obtener todos los resultados
+
             rows = cur.fetchall()
 
-            # Limpiar la tabla antes de mostrar los resultados
+
             self.StockTable.delete(*self.StockTable.get_children())
 
-            # Insertar las filas de los resultados en la tabla
+  
             for row in rows:
                 self.StockTable.insert('', END, values=row)
 
-            # Si no se encontraron filas, mostrar un mensaje
+
             if not rows:
                 messagebox.showinfo("Sin Resultados", "No se encontraron coincidencias con los criterios de búsqueda", parent=self.container)
 
@@ -287,7 +287,7 @@ class stockClass:
         self.var_searchtxt.set("")
         self.show()
 
-# Main
+
 if __name__ == "__main__":
     root = Tk()
     obj = stockClass(root)

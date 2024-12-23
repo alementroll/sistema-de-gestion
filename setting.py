@@ -8,14 +8,14 @@ import time
 from tkinter import filedialog
 
 class SettingClass(Frame):
-    title = None  # Atributo de clase para el título
+    title = None  
 
     def __init__(self, container):
-        super().__init__(container, bg="#bde3ff")  # Cambia el color de fondo aquí
+        super().__init__(container, bg="#bde3ff") 
         self.container = container
         self.container.config(bg="#bde3ff")
 
-        # Verifica si el título ya fue creado
+   
         if SettingClass.title is None:
             SettingClass.title = Label(self.container, text="Ajustes", 
                                         font=("goudy old style", 25, "bold"), bg="#13278f", fg="white", bd=3)
@@ -62,7 +62,7 @@ class SettingClass(Frame):
             backup_dir = "backups"
             os.makedirs(backup_dir, exist_ok=True)
 
-            backup_file = os.path.join(backup_dir, f"tbs_backup_{int(time.time())}.db")  # Incluye timestamp
+            backup_file = os.path.join(backup_dir, f"tbs_backup_{int(time.time())}.db")  
 
             shutil.copy2(db_file, backup_file)
             messagebox.showinfo("Éxito", f"Respaldo creado en: {backup_file}")
@@ -75,12 +75,12 @@ class SettingClass(Frame):
         try:
             backup_file = filedialog.askopenfilename(title="Selecciona un respaldo", 
                                                       filetypes=[("Database files", "*.db")],
-                                                      initialdir="backups")  # Carpeta por defecto
+                                                      initialdir="backups")  
 
-            if not backup_file:  # Si no se selecciona ningún archivo
+            if not backup_file:  
                 return
 
-            # Copiar el respaldo seleccionado a la ubicación original
+  
             shutil.copy2(backup_file, "tbs.db")
             messagebox.showinfo("Éxito", "Respaldo restaurado exitosamente.")
 
@@ -94,7 +94,7 @@ class SettingClass(Frame):
             return
         
         try:
-            interval = int(self.auto_backup_entry.get()) * 86400  # Convertir días a segundos
+            interval = int(self.auto_backup_entry.get()) * 86400  
             if interval <= 0:
                 messagebox.showerror("Error", "Por favor ingresa un intervalo válido (mayor a 0).")
                 return
@@ -110,41 +110,38 @@ class SettingClass(Frame):
     def auto_backup(self, interval):
         """Realiza el respaldo automático."""
         while self.auto_backup_running:
-            time.sleep(interval)  # Espera el intervalo especificado
-            self.create_backup()  # Realiza el respaldo
+            time.sleep(interval)  
+            self.create_backup()  
 
     def stop_auto_backup(self):
         """Detiene el respaldo automático."""
         self.auto_backup_running = False
         if self.auto_backup_thread is not None:
-            self.auto_backup_thread.join()  # Espera a que el hilo termine
+            self.auto_backup_thread.join()  
         messagebox.showinfo("Información", "El respaldo automático ha sido detenido.")
 
     def change_password(self):
         """Permite cambiar la contraseña de un usuario."""
-        # Verificar si el usuario actual es administrador
+     
         if not self.is_admin():
             messagebox.showerror("Error", "No tienes permisos para cambiar contraseñas.")
             return
         
-        # Pedir el ID del usuario y la nueva contraseña
+
         user_id = simpledialog.askinteger("Cambiar Contraseña", "Ingresa el ID del usuario:")
         if user_id is None:
-            return  # Usuario canceló
+            return  
 
         new_password = simpledialog.askstring("Cambiar Contraseña", "Ingresa la nueva contraseña:", show='*')
         if new_password is None:
-            return  # Usuario canceló
+            return  
         
-        # Cambiar la contraseña en la base de datos
+  
         self.update_password(user_id, new_password)
 
     def is_admin(self):
         """Verifica si el usuario actual es administrador."""
-        # Aquí puedes implementar la lógica para verificar el tipo de usuario.
-        # Por ejemplo, puedes obtener el tipo de usuario de la sesión actual.
-        # Supongamos que el tipo de usuario está almacenado en una variable.
-        current_user_type = "Administrador"  # Esto debería ser dinámico según la sesión
+        current_user_type = "Administrador"  
         return current_user_type == "Administrador"
 
     def update_password(self, user_id, new_password):
@@ -165,14 +162,14 @@ class SettingClass(Frame):
         finally:
             con.close()
 
-# Crear la aplicación
+
 if __name__ == "__main__":
     root = Tk()
     root.title("Panel de Configuración")
     root.geometry("800x600")
     root.configure(bg="#bde3ff")
 
-    # Crear la instancia de SettingClass
+
     app = SettingClass(root)
     app.pack(fill=BOTH, expand=True)
 

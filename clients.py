@@ -8,7 +8,7 @@ class ClientClass:
         self.container = container
         self.container.config(bg="#bde3ff")
         
-        # All Variables
+        # Variables
         self.var_searchby = StringVar()
         self.var_searchtxt = StringVar()
         self.var_contact = StringVar()

@@ -123,11 +123,11 @@ class OrderClass:
         width = self.container.winfo_width()
         height = self.container.winfo_height()
 
-        scale_width = width / 1200  # Escala de referencia para el ancho
-        scale_height = height / 700  # Escala de referencia para la altura
+        scale_width = width / 1200  
+        scale_height = height / 700 
         font_size = int(14 * min(scale_width, scale_height))
 
-        font_size = max(10, font_size)  # Asegura un tamaño mínimo
+        font_size = max(10, font_size)  
         self.title.config(font=("goudy old style", font_size + 10, "bold"))
 
         # Ajuste de tamaño de los elementos
@@ -153,7 +153,7 @@ class OrderClass:
 
     def load_services(self):
         """Carga los servicios desde la tabla 'services' en la base de datos."""
-        self.lst_services.delete(0, END)  # Limpiar la lista de servicios antes de cargar nuevos datos
+        self.lst_services.delete(0, END)  
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
@@ -169,26 +169,22 @@ class OrderClass:
         cur = con.cursor()
         try:
             if self.var_client_type.get() == "Cliente Nuevo":
-                # Validar campos de cliente nuevo
                 if not self.var_new_client_name.get() or not self.var_new_client_email.get() or not self.var_new_client_contact.get():
                     messagebox.showerror("Error", "Todos los campos de cliente nuevo son obligatorios")
                     return
 
-                # Insertar nuevo cliente
                 cur.execute("""
                     INSERT INTO client (name, email, contact, pass, utype)
                     VALUES (?, ?, ?, ?, ?)
                 """, (self.var_new_client_name.get(), self.var_new_client_email.get(), self.var_new_client_contact.get(), "", "Cliente"))
                 con.commit()
 
-                # Obtener el ID del nuevo cliente
                 cur.execute("SELECT eid FROM client WHERE email = ?", (self.var_new_client_email.get(),))
                 client_id = cur.fetchone()[0]
 
-                # Recargar la lista de clientes en otras vistas
                 self.reload_clients_callback()
             else:
-                client_id = int(self.var_client.get().split(" - ")[0])  # Extraer ID del cliente existente
+                client_id = int(self.var_client.get().split(" - ")[0]) 
 
             device = self.var_device.get()
             status = self.var_status.get()
@@ -217,7 +213,7 @@ class OrderClass:
 
             con.commit()
             messagebox.showinfo("Éxito", "Pedido agregado correctamente")
-            self.show_orders_list_callback()  # Recargar la lista de pedidos
+            self.show_orders_list_callback() 
         except Exception as ex:
             messagebox.showerror("Error", f"Error al agregar pedido: {str(ex)}")
         finally:

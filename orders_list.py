@@ -133,7 +133,7 @@ class OrderListClass:
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
-            # Consulta SQL para obtener los datos con nombres en lugar de IDs
+            # Consulta SQL
             cur.execute("""
                 SELECT o.id, c.name AS client_name, o.device, o.status, o.details, GROUP_CONCAT(s.name, ', ') AS services
                 FROM orders o
@@ -151,11 +151,11 @@ class OrderListClass:
             con.close()
 
     def update_table(self, rows):
-        # Limpia el frame antes de llenarlo nuevamente
+
         for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
 
-        # Rellena el frame con los datos obtenidos
+
         for row in rows:
             self.create_order_frame(row)
 
