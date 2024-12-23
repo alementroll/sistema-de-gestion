@@ -1,8 +1,11 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import messagebox
 import sqlite3
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import os  # Importar el módulo os para abrir el PDF
 
 class DataVisualizationClass:
     def __init__(self, container):
@@ -24,32 +27,154 @@ class DataVisualizationClass:
                                 font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
         self.btn_orders.place(relx=0.55, rely=0.1, relwidth=0.3, height=40)
 
+        # Botón para generar PDF
+        self.btn_generate_pdf = Button(self.container, text="Generar PDF Resumen", command=self.generate_pdf,
+                                        font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_generate_pdf.place(relx=0.35, rely=0.2, relwidth=0.3, height=40)
+
+        # Botón para abrir PDF
+        self.btn_open_pdf = Button(self.container, text="Abrir PDF Resumen", command=self.open_pdf,
+                                    font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_open_pdf.place(relx=0.35, rely=0.3, relwidth=0.3, height=40)
+
         # Canvas donde se dibujará el gráfico
         self.canvas_frame = Frame(self.container)
-        self.canvas_frame.place(relx=0.01, rely=0.2, relwidth=0.98, relheight=0.75)
+        self.canvas_frame.place(relx=0.01, rely=0.4, relwidth=0.98, relheight=0.55)
+
+        self.pdf_filename = "resumen_datos.pdf"  # Nombre del archivo PDF
+
+    def fetch_client_data(self):
+        """Consulta los datos de los clientes."""
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM client")
+        data = cur.fetchall()
+        con.close()
+        return data
+
+    def fetch_service_data(self):
+        """Consulta los datos de los servicios."""
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM services")
+        data = cur.fetchall()
+        con.close()
+        return data
 
     def fetch_stock_data(self):
         """Consulta el stock de productos."""
         con = sqlite3.connect('tbs.db')
         cur = con.cursor()
+        cur.execute("SELECT itemname, qty FROM stock")
+        data = cur.fetchall()
+        con.close()
+        return data
+
+    def fetch_order_data(self):
+        """Consulta los datos de los pedidos."""
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM orders")
+        data = cur.fetchall()
+        con.close()
+        return data
+
+    def fetch_order_services(self):
+        """Consulta los servicios por pedido."""
+        con = sqlite3.connect('tbs.db')
+        cur = con.cursor()
         cur.execute("""
-            SELECT itemname, qty 
-            FROM stock
+            SELECT orders.id, services.name 
+            FROM order_services 
+            JOIN orders ON order_services.order_id = orders.id
+            JOIN services ON order_services.service_id = services.id
         """)
         data = cur.fetchall()
         con.close()
         return data
 
-    def fetch_order_count(self):
-        """Consulta la cantidad total de pedidos."""
+    def fetch_order_products(self):
+        """Consulta los productos por pedido."""
         con = sqlite3.connect('tbs.db')
         cur = con.cursor()
         cur.execute("""
-            SELECT COUNT(*) FROM orders
+            SELECT orders.id, stock.itemname 
+            FROM order_products 
+            JOIN orders ON order_products.order_id = orders.id
+            JOIN stock ON order_products.product_id = stock.pid
         """)
-        count = cur.fetchone()[0]
+        data = cur.fetchall()
         con.close()
-        return count
+        return data
+
+    def generate_pdf(self):
+        """Genera un PDF con un resumen de la información de la base de datos."""
+        client_data = self.fetch_client_data()
+        service_data = self.fetch_service_data()
+        stock_data = self.fetch_stock_data()
+        order_data = self.fetch_order_data()
+        order_services = self.fetch_order_services()
+        order_products = self.fetch_order_products()
+
+        c = canvas.Canvas(self.pdf_filename, pagesize=letter)
+        width, height = letter
+
+        # Título en el PDF
+        c.setFont("Helvetica-Bold", 16)
+        c.drawString(100, height - 50, "Resumen de Datos")
+
+        # Datos de clientes
+        c.setFont("Helvetica", 12)
+        c.drawString(100, height - 80, "Clientes:")
+        y_position = height - 100
+        for eid, name, email, contact, _, _ in client_data:
+            c.drawString(100, y_position, f"ID: {eid}, Nombre: {name}, Email: {email}, Contacto: {contact}")
+            y_position -= 20
+
+        # Datos de servicios
+        c.drawString(100, y_position, "Servicios:")
+        y_position -= 20
+        for service_id, name, price, estimated_time in service_data:
+            c.drawString(100, y_position, f"ID: {service_id}, Nombre: {name}, Precio: {price}, Tiempo Estimado: {estimated_time}")
+            y_position -= 20
+
+        # Datos de stock
+        c.drawString(100, y_position, "Stock de Productos:")
+        y_position -= 20
+        for itemname, qty in stock_data:
+            c.drawString(100, y_position, f"Producto: {itemname}, Cantidad: {qty}")
+            y_position -= 20
+
+        # Datos de pedidos
+        c.drawString(100, y_position, "Pedidos:")
+        y_position -= 20
+        for order_id, client_id, device, status, details, order_date, total_price in order_data:
+            c.drawString(100, y_position, f"ID: {order_id}, Cliente ID: {client_id}, Dispositivo: {device}, Estado: {status}, Fecha: {order_date}, Total: {total_price}")
+            y_position -= 20
+
+        # Servicios por pedido
+        c.drawString(100, y_position, "Servicios por Pedido:")
+        y_position -= 20
+        for order_id, service_name in order_services:
+            c.drawString(100, y_position, f"Pedido ID: {order_id}, Servicio: {service_name}")
+            y_position -= 20
+
+        # Productos por pedido
+        c.drawString(100, y_position, "Productos por Pedido:")
+        y_position -= 20
+        for order_id, itemname in order_products:
+            c.drawString(100, y_position, f"Pedido ID: {order_id}, Producto: {itemname}")
+            y_position -= 20
+
+        c.save()
+        messagebox.showinfo("Éxito", f"PDF generado: {self.pdf_filename}")
+
+    def open_pdf(self):
+        """Abre el PDF generado con el visor predeterminado del sistema."""
+        if os.path.exists(self.pdf_filename):
+            os.startfile(self.pdf_filename)  # Para Windows
+        else:
+            messagebox.showerror("Error", "No se ha generado el PDF aún.")
 
     def show_stock(self):
         """Genera y muestra el gráfico de stock de productos."""
@@ -78,28 +203,25 @@ class DataVisualizationClass:
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.bar(['Total de Pedidos'], [count], color='orange')
         ax.set_ylabel('Cantidad de Pedidos')
-        ax.set_title('Cantidad Total de Pedidos')
-
-        # Configurar el eje y para mostrar solo números enteros
-        ax.yaxis.set_major_locator(plt.MaxNLocator(integer=True))
+        ax.set_title('Conteo Total de Pedidos')
 
         self.clear_canvas()
         self.display_chart(fig)
 
     def clear_canvas(self):
-        """Elimina el gráfico anterior si existe."""
+        """Limpia el canvas para mostrar nuevos gráficos."""
         for widget in self.canvas_frame.winfo_children():
             widget.destroy()
 
     def display_chart(self, fig):
-        """Integra el gráfico con Tkinter."""
+        """Muestra el gráfico en el canvas."""
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill=BOTH, expand=True)
 
-# Crear la aplicación
 if __name__ == "__main__":
     root = Tk()
     app = DataVisualizationClass(root)
-    root.geometry("1920x1080")
+    root.geometry("800x600")
+    root.title("Gestión de Datos")
     root.mainloop()
