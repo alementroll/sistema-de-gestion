@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import messagebox, filedialog
+from tkinter import messagebox, simpledialog
 import sqlite3
 import shutil
 import os
@@ -30,17 +30,22 @@ class SettingClass(Frame):
                                   font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
         self.btn_restore.place(relx=0.35, rely=0.35, relwidth=0.3, height=50)
 
+        # Botón para cambiar contraseñas
+        self.btn_change_password = Button(self.container, text="Cambiar Contraseña de Usuario", command=self.change_password,
+                                           font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
+        self.btn_change_password.place(relx=0.35, rely=0.45, relwidth=0.3, height=50)
+
         # Configuración de respaldo automático
         self.auto_backup_label = Label(self.container, text="Respaldo Automático (días):", 
                                        font=("goudy old style", 15, "bold"), bg="#bde3ff")
-        self.auto_backup_label.place(relx=0.3, rely=0.5)
+        self.auto_backup_label.place(relx=0.3, rely=0.6)
 
         self.auto_backup_entry = Entry(self.container, font=("goudy old style", 15), bd=3)
-        self.auto_backup_entry.place(relx=0.5, rely=0.5, relwidth=0.2, height=30)
+        self.auto_backup_entry.place(relx=0.5, rely=0.6, relwidth=0.2, height=30)
 
         self.btn_start_auto_backup = Button(self.container, text="Iniciar Respaldo Automático", command=self.start_auto_backup,
                                              font=("goudy old style", 15, "bold"), bg="#13278f", fg="white", bd=3, cursor="hand2")
-        self.btn_start_auto_backup.place(relx=0.35, rely=0.6, relwidth=0.3, height=50)
+        self.btn_start_auto_backup.place(relx=0.35, rely=0.7, relwidth=0.3, height=50)
 
         self.auto_backup_thread = None
         self.auto_backup_running = False
@@ -113,6 +118,51 @@ class SettingClass(Frame):
         if self.auto_backup_thread is not None:
             self.auto_backup_thread.join()  # Espera a que el hilo termine
         messagebox.showinfo("Información", "El respaldo automático ha sido detenido.")
+
+    def change_password(self):
+        """Permite cambiar la contraseña de un usuario."""
+        # Verificar si el usuario actual es administrador
+        if not self.is_admin():
+            messagebox.showerror("Error", "No tienes permisos para cambiar contraseñas.")
+            return
+        
+        # Pedir el ID del usuario y la nueva contraseña
+        user_id = simpledialog.askinteger("Cambiar Contraseña", "Ingresa el ID del usuario:")
+        if user_id is None:
+            return  # Usuario canceló
+
+        new_password = simpledialog.askstring("Cambiar Contraseña", "Ingresa la nueva contraseña:", show='*')
+        if new_password is None:
+            return  # Usuario canceló
+        
+        # Cambiar la contraseña en la base de datos
+        self.update_password(user_id, new_password)
+
+    def is_admin(self):
+        """Verifica si el usuario actual es administrador."""
+        # Aquí puedes implementar la lógica para verificar el tipo de usuario.
+        # Por ejemplo, puedes obtener el tipo de usuario de la sesión actual.
+        # Supongamos que el tipo de usuario está almacenado en una variable.
+        current_user_type = "Administrador"  # Esto debería ser dinámico según la sesión
+        return current_user_type == "Administrador"
+
+    def update_password(self, user_id, new_password):
+        """Actualiza la contraseña del usuario en la base de datos."""
+        try:
+            con = sqlite3.connect("tbs.db")
+            cur = con.cursor()
+            cur.execute("UPDATE client SET pass = ? WHERE eid = ?", (new_password, user_id))
+            con.commit()
+
+            if cur.rowcount == 0:
+                messagebox.showerror("Error", "Usuario no encontrado.")
+            else:
+                messagebox.showinfo("Éxito", "Contraseña actualizada exitosamente.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo actualizar la contraseña: {e}")
+        finally:
+            con.close()
 
 # Crear la aplicación
 if __name__ == "__main__":
