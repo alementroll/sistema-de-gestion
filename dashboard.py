@@ -202,6 +202,15 @@ class TBS:
         if hasattr(self, "orders_list_obj"):
             self.orders_list_obj.show()
 
+    def reload_services(self):
+        """Recarga la lista de servicios en las vistas correspondientes."""
+        if hasattr(self, "services_obj"):
+            self.services_obj.show_services()
+        if hasattr(self, "orders_obj"):
+            self.orders_obj.load_services()
+        if hasattr(self, "orders_list_obj"):
+            self.orders_list_obj.show()
+
     def show_setting(self):
         self.show_frame("settings")
         if not hasattr(self, "settings"):
@@ -215,7 +224,7 @@ class TBS:
     def show_services(self):
         self.show_frame("services")
         if not hasattr(self, "services_obj"):
-            self.services_obj = ServiceClass(self.services_frame)
+            self.services_obj = ServiceClass(self.services_frame, self.reload_services)
 
     def show_info(self):
         self.show_frame("info")

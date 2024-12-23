@@ -3,9 +3,10 @@ from tkinter import ttk, messagebox
 import sqlite3
 
 class ServiceClass:
-    def __init__(self, container):
+    def __init__(self, container, reload_services_callback):
         self.container = container
         self.container.config(bg="#bde3ff")
+        self.reload_services_callback = reload_services_callback
 
         # All Variables
         self.var_searchtxt = StringVar()
@@ -175,6 +176,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio agregado con éxito", parent=self.container)
             self.show_services()
             self.clear()
+            self.reload_services_callback()  # Recargar servicios en otras vistas
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -198,6 +200,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio actualizado con éxito", parent=self.container)
             self.show_services()
             self.clear()
+            self.reload_services_callback()  # Recargar servicios en otras vistas
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -215,6 +218,7 @@ class ServiceClass:
             messagebox.showinfo("Éxito", "Servicio eliminado con éxito", parent=self.container)
             self.show_services()
             self.clear()
+            self.reload_services_callback()  # Recargar servicios en otras vistas
         except Exception as ex:
             messagebox.showerror("Error", f"Ocurrió un error: {str(ex)}", parent=self.container)
         finally:
@@ -278,5 +282,5 @@ class ServiceClass:
 
 if __name__ == "__main__":
     root = Tk()
-    obj = ServiceClass(root)
+    obj = ServiceClass(root, lambda: print("Callback no definido"))
     root.mainloop()

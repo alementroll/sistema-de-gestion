@@ -72,7 +72,7 @@ class OrderClass:
         self.lbl_services = Label(self.container, text="Servicios", font=("goudy old style", 20), bg="#bde3ff")
         self.lbl_services.place(relx=0.05, rely=0.50)
         self.lst_services = Listbox(self.container, selectmode=MULTIPLE, font=("goudy old style", 18), bg="white", bd=3)
-        self.lst_services.place(relx=0.25, rely=0.50, relwidth=0.4, relheight=0.1)
+        self.lst_services.place(relx=0.25, rely=0.50, relwidth=0.4, relheight=0.15)
         self.load_services()
 
         # Botón Agregar
@@ -153,6 +153,7 @@ class OrderClass:
 
     def load_services(self):
         """Carga los servicios desde la tabla 'services' en la base de datos."""
+        self.lst_services.delete(0, END)  # Limpiar la lista de servicios antes de cargar nuevos datos
         con = sqlite3.connect(database=r'tbs.db')
         cur = con.cursor()
         try:
@@ -216,6 +217,7 @@ class OrderClass:
 
             con.commit()
             messagebox.showinfo("Éxito", "Pedido agregado correctamente")
+            self.show_orders_list_callback()  # Recargar la lista de pedidos
         except Exception as ex:
             messagebox.showerror("Error", f"Error al agregar pedido: {str(ex)}")
         finally:

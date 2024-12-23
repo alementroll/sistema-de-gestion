@@ -340,16 +340,15 @@ class billClass:
 
 
     def bill_bottom(self):
+        iva = self.total_sales * 0.19
+        total_con_iva = self.total_sales + iva
         bill_bottom_temp = f'''
     {str("=" * 47)}
-    Total Sales(A)                 CLP.{self.total_sales:.2f}
-    Total sgst(9%)                 CLP.{self.total_sgst:.2f}
-    Total cgst(9%)                 CLP.{self.total_cgst:.2f}
-    Total gst(18%)(B)              CLP.{self.total_gst:.2f}
-    Total Invoice Amount(A+B)      CLP.{self.total_invoice_amount:.2f}
+    Total Ventas(A)                 CLP.{self.total_sales:.2f}
+    IVA(19%)                        CLP.{iva:.2f}
+    Total Factura(A+IVA)            CLP.{total_con_iva:.2f}
     '''
         self.txt_bill_area.insert(END, bill_bottom_temp)
-
 
     def bill_middle(self):
         con = sqlite3.connect(database=r'tbs.db')
